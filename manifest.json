@@ -1,0 +1,28 @@
+{
+  "manifest_version": 2,
+
+  "name": "lun.ua helper",
+  "description": "This plugin allow to mark building by advantage or disadvantage",
+  "version": "0.1",
+
+  "permissions": [
+    "storage",
+    "https://ajax.googleapis.com/"
+  ],
+  "content_security_policy": "script-src 'self'; object-src 'self'",
+ "browser_action": {
+    "default_icon": "logo.png",
+    "default_popup": "popup.html"
+  },
+
+  "content_scripts": [ {
+  "css":["style.css"],
+  "matches": [
+    "https://lun.ua/uk/новобудови*",
+    "https://lun.ua/ru/новостройки*",
+    "https://lun.ua/ru/все-новостройки*"
+  ],
+  "js": ["jquery-1.12.4.min.js", "background.js", "script.js"],
+  "run_at": "document_idle"
+} ]
+}
