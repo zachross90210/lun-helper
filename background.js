@@ -13,17 +13,20 @@ function hide(oid, card) {
         // so we select the key we need
         const { ids } = result;
 
-        const idsv = result.ids.map((obj) => obj.oid);
-        if (idsv.includes(oid)) {
-            ids.splice(idsv.indexOf(oid), 1);
-            makeCardWhite(card);
+        if (ids.includes(oid)) {
+            ids.splice(ids.indexOf(oid), 1);
+            if (card) {
+                makeCardWhite(card);
+            }
         } else {
-            ids.push({ oid, HasBeenUploadedYet: false });
+            ids.push({ oid });
             chrome.storage.sync.get('type', (result) => {
-                if (result.type === "remove") {
-                    card.closest('div.card-grid-cell').remove();
-                } else {
-                    makeCardRed(card);
+                if (card) {
+                    if (result.type === "remove") {
+                        card.closest('div.card-grid-cell').remove();
+                    } else {
+                        makeCardRed(card);
+                    }
                 }
             })
         }
@@ -37,7 +40,7 @@ function hide(oid, card) {
 
 function MarkIfHidden(oid,card) {
     return chrome.storage.sync.get('ids', (result) => {
-        const ids = result.ids.map((obj) => obj.oid);
+        const ids = result.ids;
         if (ids.includes(oid)) {
             chrome.storage.sync.get('type', (result) => {
                 if (result.type === "remove") {
