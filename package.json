@@ -1,0 +1,29 @@
+{
+  "name": "lun-helper",
+  "version": "1.0.0",
+  "description": "This plugin allow to hide building on lun.ua",
+  "main": "background.js",
+  "scripts": {
+    "test": "test",
+    "lint": "eslint --ignore-path .eslintignore .",
+    "precommit": "lint-staged"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@bitbucket.org/rostyslavnikitin/lun-helper.git"
+  },
+  "keywords": [
+    "flats"
+  ],
+  "author": "Rostyslav Nikitin",
+  "license": "ISC",
+  "homepage": "https://bitbucket.org/rostyslavnikitin/lun-helper#readme",
+  "dependencies": {},
+  "devDependencies": {
+    "eslint": "^7.7.0",
+    "eslint-config-airbnb-base": "^14.2.0",
+    "eslint-plugin-html": "^6.0.3",
+    "eslint-plugin-import": "^2.22.0",
+    "eslint-plugin-json": "^2.1.2"
+  }
+}
