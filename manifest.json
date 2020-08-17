@@ -20,9 +20,8 @@
   "css":["style.css"],
   "matches": [
     "*://lun.ua/uk/%D0%BD%D0%BE%D0%B2%D0%BE%D0%B1%D1%83%D0%B4%D0%BE%D0%B2%D0%B8*",
-    "*://lun.ua/uk/новобудови*",
-    "*://lun.ua/ru/новостройки*",
-    "*://lun.ua/ru/все-новостройки*"
+    "*://lun.ua/ru/%D0%BD%D0%BE%D0%B2%D0%BE%D1%81%D1%82%D1%80%D0%BE%D0%B9%D0%BA%D0%B8*",
+    "*://lun.ua/ru/%D0%B2%D1%81%D0%B5-%D0%BD%D0%BE%D0%B2%D0%BE%D1%81%D1%82%D1%80%D0%BE%D0%B9%D0%BA%D0%B8*"
   ],
   "js": ["background.js", "script.js"],
   "run_at": "document_start"
