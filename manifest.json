@@ -7,6 +7,8 @@
 
   "permissions": [
     "storage",
+    "activeTab",
+    "tabs",
     "https://ajax.googleapis.com/"
   ],
   "content_security_policy": "script-src 'self'; object-src 'self'",
@@ -18,11 +20,12 @@
   "content_scripts": [ {
   "css":["style.css"],
   "matches": [
-    "https://lun.ua/uk/новобудови*",
-    "https://lun.ua/ru/новостройки*",
-    "https://lun.ua/ru/все-новостройки*"
+    "*://lun.ua/uk/%D0%BD%D0%BE%D0%B2%D0%BE%D0%B1%D1%83%D0%B4%D0%BE%D0%B2%D0%B8*",
+    "*://lun.ua/uk/новобудови*",
+    "*://lun.ua/ru/новостройки*",
+    "*://lun.ua/ru/все-новостройки*"
   ],
-  "js": ["jquery-1.12.4.min.js", "background.js", "script.js"],
-  "run_at": "document_idle"
+  "js": ["jquery-3.5.1.min.js", "background.js", "script.js"],
+  "run_at": "document_start"
 } ]
 }
