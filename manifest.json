@@ -25,7 +25,7 @@
     "*://lun.ua/ru/новостройки*",
     "*://lun.ua/ru/все-новостройки*"
   ],
-  "js": ["jquery-3.5.1.min.js", "background.js", "script.js"],
+  "js": ["background.js", "script.js"],
   "run_at": "document_start"
 } ]
 }
