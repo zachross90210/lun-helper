@@ -1,9 +1,9 @@
 function makeCardWhite(card) {
-    card.classList.remove('redbg');
+    card.classList.remove('redBg');
 }
 
 function makeCardRed(card) {
-    card.classList.add('redbg');
+    card.classList.add('redBg');
 }
 
 function hide(oid, card) {
