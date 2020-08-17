@@ -1,16 +1,12 @@
-document.addEventListener("DOMContentLoaded", function () {
-    console.log(document);
-
+document.addEventListener('DOMContentLoaded', () => {
     chrome.storage.sync.get(['type'], (result) => {
         document.getElementById('type').value = result;
     });
 
-    document.getElementById('form_submit').addEventListener('click', function () {
+    document.getElementById('form_submit').addEventListener('click', (event) => {
         event.preventDefault();
-        let type = document.getElementById('type').value;
-        console.log(`set type to ${type}`);
-        chrome.storage.sync.set({"type": type}, function () {
-            console.log('hide type is set to ' + type);
+        const type = document.getElementById('type').value;
+        chrome.storage.sync.set({ type }, () => {
         });
     });
 }, false);

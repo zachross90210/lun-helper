@@ -20,47 +20,44 @@ function hide(oid, card) {
             }
         } else {
             ids.push({ oid });
-            chrome.storage.sync.get('type', (result) => {
+            chrome.storage.sync.get('type', (res) => {
                 if (card) {
-                    if (result.type === "remove") {
+                    if (res.type === 'remove') {
                         card.closest('div.card-grid-cell').remove();
                     } else {
                         makeCardRed(card);
                     }
                 }
-            })
+            });
         }
 
         // set the new array value to the same key
-        chrome.storage.sync.set({ ids: ids }, () => {
+        chrome.storage.sync.set({ ids }, () => {
         });
     });
 }
 
-
-function MarkIfHidden(oid,card) {
+function MarkIfHidden(oid, card) {
     return chrome.storage.sync.get('ids', (result) => {
-        const ids = result.ids;
+        const { ids } = result;
         if (ids.includes(oid)) {
-            chrome.storage.sync.get('type', (result) => {
-                if (result.type === "remove") {
+            chrome.storage.sync.get('type', (res) => {
+                if (res.type === 'remove') {
                     card.closest('div.card-grid-cell').remove();
                 } else {
                     makeCardRed(card);
                 }
-            })
+            });
         }
     });
 }
-
-
 
 function getObjectID(card) {
     return card.querySelector('div.favorite').getAttribute('data-favorites')
         .split('-')[1];
 }
 
-document.addEventListener("DOMContentLoaded", function() {
+document.addEventListener('DOMContentLoaded', () => {
     document.querySelectorAll('div.card').forEach((card) => {
         const oid = getObjectID(card);
 
