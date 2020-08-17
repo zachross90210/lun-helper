@@ -9,7 +9,20 @@
     <meta http-equiv="Content-Security-Policy"
           content="default-src 'self' gap:; script-src 'self' data: https://ssl.gstatic.com 'unsafe-eval'; object-src *; style-src 'self' data: 'unsafe-inline'; img-src 'self' data:; media-src 'self' data:; font-src 'self' data:; connect-src *">
     <title>lun.ua tool</title>
+    <script src="script.js"></script>
 </head>
-<body>
+<body style="width: 500px; height: 300px">
+    <h3>Select type of hiding project:</h3>
+    <form>
+        <label>
+            <select id="type">
+                <option selected>----</option>
+                <option value="mark">mark</option>
+                <option value="remove">remove</option>
+            </select>
+        </label>
+        <input type="button" id="form_submit" value="change">
+    </form>
+
 </body>
 </html>

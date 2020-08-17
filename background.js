@@ -19,7 +19,13 @@ function hide(oid, card) {
             makeCardWhite(card);
         } else {
             ids.push({ oid, HasBeenUploadedYet: false });
-            makeCardRed(card);
+            chrome.storage.sync.get('type', (result) => {
+                if (result.type === "remove") {
+                    card.closest('div.card-grid-cell').remove();
+                } else {
+                    makeCardRed(card);
+                }
+            })
         }
 
         // set the new array value to the same key
@@ -33,10 +39,18 @@ function MarkIfHidden(oid,card) {
     return chrome.storage.sync.get('ids', (result) => {
         const ids = result.ids.map((obj) => obj.oid);
         if (ids.includes(oid)) {
-            makeCardRed(card);
+            chrome.storage.sync.get('type', (result) => {
+                if (result.type === "remove") {
+                    card.closest('div.card-grid-cell').remove();
+                } else {
+                    makeCardRed(card);
+                }
+            })
         }
     });
 }
+
+
 
 function getObjectID(card) {
     return card.querySelector('div.favorite').getAttribute('data-favorites')
