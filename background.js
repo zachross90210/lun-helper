@@ -13,13 +13,16 @@ function updateObject(bid, mode, card) {
     chrome.storage.sync.set(item, () => {
         chrome.storage.sync.get('type', (res) => {
             if (card) {
-                if (mode) {
-                    makeCardWhite(card);
-                }
-                if (res.type === 'remove') {
-                    card.closest('div.card-grid-cell').remove();
-                } else {
-                    makeCardRed(card);
+                if (!mode) {
+                    if (res.type === 'mark') {
+                        makeCardWhite(card);
+                    }
+                } else if (mode) {
+                    if (res.type === 'remove') {
+                        card.closest('div.card-grid-cell').remove();
+                    } else {
+                        makeCardRed(card);
+                    }
                 }
             }
         });
@@ -30,7 +33,6 @@ function hide(oid, card) {
     const bid = `b-${oid}`;
     chrome.storage.sync.get([bid], (result) => {
         if (result[bid]) {
-            console.log('set false');
             updateObject(bid, false, card);
         } else {
             updateObject(bid, true, card);
