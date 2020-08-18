@@ -8,7 +8,7 @@ function makeCardRed(card) {
 
 function updateObject(bid, mode, card) {
     const item = {};
-    item[bid] = true;
+    item[bid] = mode;
 
     chrome.storage.sync.set(item, () => {
         chrome.storage.sync.get('type', (res) => {
@@ -30,6 +30,7 @@ function hide(oid, card) {
     const bid = `b-${oid}`;
     chrome.storage.sync.get([bid], (result) => {
         if (result[bid]) {
+            console.log('set false');
             updateObject(bid, false, card);
         } else {
             updateObject(bid, true, card);
