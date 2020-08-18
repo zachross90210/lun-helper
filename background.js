@@ -53,14 +53,22 @@ function addHideButton(card, oid, isHidden) {
     hideDiv.setAttribute('class', 'button -icon favorite');
     hideDiv.setAttribute('style', 'right: 50px;');
 
-    const color = { true: 'green', false: 'red' };
-    const text = { true: 'show', false: 'hide' };
+    let color;
+    let text;
+
+    if (isHidden) {
+        color = 'green';
+        text = 'show';
+    } else {
+        color = 'red';
+        text = 'hide';
+    }
 
     // hide button
     const hideButton = document.createElement('button');
-    hideButton.setAttribute('style', `background-color: ${color[isHidden]};`);
+    hideButton.setAttribute('style', `background-color: ${color};`);
     hideButton.setAttribute('class', 'hideButton');
-    hideButton.textContent = text[isHidden];
+    hideButton.textContent = text;
     hideButton.addEventListener('click', () => hide(oid, card));
 
     // add button to block
