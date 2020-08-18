@@ -57,7 +57,7 @@ function getObjectID(card) {
         .split('-')[1];
 }
 
-document.addEventListener('DOMContentLoaded', () => {
+function processObjects() {
     document.querySelectorAll('div.card').forEach((card) => {
         // Object ID
         const oid = getObjectID(card);
@@ -83,4 +83,25 @@ document.addEventListener('DOMContentLoaded', () => {
         const a = card.querySelector('a');
         card.insertBefore(hideDiv, a.querySelector('a.card-media'));
     });
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    const elementToObserve = document.getElementById('search-results');
+    // create a new instance of `MutationObserver` named `observer`,
+    // passing it a callback function
+    const observer = new MutationObserver(() => {
+        // process objects filtering on SPA page changed
+        processObjects();
+    });
+
+    // call `observe` on that MutationObserver instance,
+    // passing it the element to observe, and the options object
+    observer.observe(elementToObserve, {
+        characterData: false,
+        childList: true,
+        attributes: false,
+    });
+
+    // process objects filtering on initial page load
+    processObjects();
 });
