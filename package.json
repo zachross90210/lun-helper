@@ -5,8 +5,7 @@
   "main": "background.js",
   "scripts": {
     "test": "test",
-    "lint": "eslint --ignore-path .eslintignore .",
-    "precommit": "lint-staged"
+    "lint": "eslint --ignore-path .eslintignore ."
   },
   "repository": {
     "type": "git",
@@ -24,6 +23,13 @@
     "eslint-config-airbnb-base": "^14.2.0",
     "eslint-plugin-html": "^6.0.3",
     "eslint-plugin-import": "^2.22.0",
-    "eslint-plugin-json": "^2.1.2"
+    "eslint-plugin-json": "^2.1.2",
+    "husky": "^4.2.5",
+    "lint-staged": "^10.2.11"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
   }
 }
