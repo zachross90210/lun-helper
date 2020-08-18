@@ -7,6 +7,7 @@ function makeCardRed(card) {
 }
 
 function updateObject(bid, mode, card) {
+    const hButton = card.querySelector('.hideButton');
     const item = {};
     item[bid] = mode;
 
@@ -17,12 +18,18 @@ function updateObject(bid, mode, card) {
                     if (res.type === 'mark') {
                         makeCardWhite(card);
                     }
+
+                    hButton.textContent = 'hide';
+                    hButton.setAttribute('style', 'background-color: red;');
+                    // hButton.setAttribute('style', 'color: black;');
                 } else if (mode) {
                     if (res.type === 'remove') {
                         card.closest('div.card-grid-cell').remove();
                     } else {
                         makeCardRed(card);
                     }
+                    hButton.textContent = 'show';
+                    hButton.setAttribute('style', 'background-color: green;');
                 }
             }
         });
@@ -40,6 +47,30 @@ function hide(oid, card) {
     });
 }
 
+function addHideButton(card, oid, isHidden) {
+    // button hide block
+    const hideDiv = document.createElement('div');
+    hideDiv.setAttribute('class', 'button -icon favorite');
+    hideDiv.setAttribute('style', 'right: 50px;');
+
+    const color = { true: 'green', false: 'red' };
+    const text = { true: 'show', false: 'hide' };
+
+    // hide button
+    const hideButton = document.createElement('button');
+    hideButton.setAttribute('style', `background-color: ${color[isHidden]};`);
+    hideButton.setAttribute('class', 'hideButton');
+    hideButton.textContent = text[isHidden];
+    hideButton.addEventListener('click', () => hide(oid, card));
+
+    // add button to block
+    hideDiv.append(hideButton);
+
+    // insert hide block before link
+    const a = card.querySelector('a');
+    card.insertBefore(hideDiv, a.querySelector('a.card-media'));
+}
+
 function MarkIfHidden(oid, card) {
     const bid = `b-${oid}`;
     return chrome.storage.sync.get([bid], (result) => {
@@ -52,6 +83,8 @@ function MarkIfHidden(oid, card) {
                 }
             });
         }
+
+        addHideButton(card, oid, result[bid]);
     });
 }
 
@@ -67,24 +100,6 @@ function processObjects() {
 
         // mark card by red background if is hidden
         MarkIfHidden(oid, card);
-
-        // button hide block
-        const hideDiv = document.createElement('div');
-        hideDiv.setAttribute('class', 'button -icon favorite');
-        hideDiv.setAttribute('style', 'right: 50px;');
-
-        // hide button
-        const hideButton = document.createElement('button');
-        hideButton.setAttribute('style', 'background-color: red;');
-        hideButton.textContent = 'hide';
-        hideButton.addEventListener('click', () => hide(oid, card));
-
-        // add button to block
-        hideDiv.append(hideButton);
-
-        // insert hide block before link
-        const a = card.querySelector('a');
-        card.insertBefore(hideDiv, a.querySelector('a.card-media'));
     });
 }
 
