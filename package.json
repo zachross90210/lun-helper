@@ -9,14 +9,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+ssh://git@bitbucket.org/rostyslavnikitin/lun-helper.git"
+    "url": "git+ssh://git@github.com:rostyslavnikitin/lun-helper.git"
   },
   "keywords": [
     "flats"
   ],
   "author": "Rostyslav Nikitin",
   "license": "ISC",
-  "homepage": "https://bitbucket.org/rostyslavnikitin/lun-helper#readme",
+  "homepage": "https://github.com/rostyslavnikitin/lun-helper#readme",
   "dependencies": {},
   "devDependencies": {
     "eslint": "^7.7.0",
