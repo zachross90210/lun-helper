@@ -101,6 +101,11 @@ function getObjectID(card) {
         .split('-')[1];
 }
 
+function getObjectIDFromObjectPage(page) {
+    return page.querySelector('div.UIFavoriteButton').getAttribute('data-favorites')
+        .split('-')[1];
+}
+
 function processObjects() {
     document.querySelectorAll('div.card').forEach((card) => {
         // Object ID
@@ -111,23 +116,68 @@ function processObjects() {
     });
 }
 
+function addBlocks() {
+    const buildingDiv = document.querySelector('.Building');
+    const newBlocksDIv = document.createElement('div');
+    const title = document.createElement('h3');
+    title.textContent = 'Минусы комплекса:';
+    newBlocksDIv.appendChild(title);
+    newBlocksDIv.classList.add('redBlock');
+    buildingDiv.insertBefore(newBlocksDIv, buildingDiv.firstChild);
+
+    const desc = document.createElement('textarea');
+    desc.classList.add('descArea');
+
+    const bid = getObjectIDFromObjectPage(document);
+
+    chrome.storage.sync.get(`desc-${bid}`, (result) => {
+        if (result[`desc-${bid}`]) {
+            desc.value = result[`desc-${bid}`];
+        }
+    });
+
+    newBlocksDIv.appendChild(desc);
+
+    const saveButton = document.createElement('button');
+    saveButton.textContent = 'save';
+
+    saveButton.classList.add('saveButton');
+    newBlocksDIv.appendChild(saveButton);
+
+    saveButton.addEventListener('click', () => {
+        const d = {};
+        d[`desc-${bid}`] = desc.value;
+        chrome.storage.sync.set(d, () => {
+            desc.style.backgroundColor = 'lightgreen';
+            // set new description
+        });
+    });
+}
+
 document.addEventListener('DOMContentLoaded', () => {
-    const elementToObserve = document.getElementById('search-results');
-    // create a new instance of `MutationObserver` named `observer`,
-    // passing it a callback function
-    const observer = new MutationObserver(() => {
-        // process objects filtering on SPA page changed
+    if (document.location.href.includes('%D0%B6%D0%BA-')) { // жк-
+        // "building page"
+        addBlocks();
+    } else if (document.querySelectorAll('#search-results').length > 0) {
+        // search results page
+
+        const elementToObserve = document.getElementById('search-results');
+        // create a new instance of `MutationObserver` named `observer`,
+        // passing it a callback function
+        const observer = new MutationObserver(() => {
+            // process objects filtering on SPA page changed
+            processObjects();
+        });
+
+        // call `observe` on that MutationObserver instance,
+        // passing it the element to observe, and the options object
+        observer.observe(elementToObserve, {
+            characterData: false,
+            childList: true,
+            attributes: false,
+        });
+
+        // process objects filtering on initial page load
         processObjects();
-    });
-
-    // call `observe` on that MutationObserver instance,
-    // passing it the element to observe, and the options object
-    observer.observe(elementToObserve, {
-        characterData: false,
-        childList: true,
-        attributes: false,
-    });
-
-    // process objects filtering on initial page load
-    processObjects();
+    }
 });
