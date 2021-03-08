@@ -11,8 +11,8 @@ function updateObject(bid, mode, card) {
     const item = {};
     item[bid] = mode;
 
-    chrome.storage.sync.set(item, () => {
-        chrome.storage.sync.get('type', (res) => {
+    chrome.storage.local.set(item, () => {
+        chrome.storage.local.get('type', (res) => {
             if (card) {
                 if (!mode) {
                     if (res.type === 'mark') {
@@ -38,7 +38,7 @@ function updateObject(bid, mode, card) {
 
 function hide(oid, card) {
     const bid = `b-${oid}`;
-    chrome.storage.sync.get([bid], (result) => {
+    chrome.storage.local.get([bid], (result) => {
         if (result[bid]) {
             updateObject(bid, false, card);
         } else {
@@ -81,9 +81,9 @@ function addHideButton(card, oid, isHidden) {
 
 function MarkIfHidden(oid, card) {
     const bid = `b-${oid}`;
-    return chrome.storage.sync.get([bid], (result) => {
+    return chrome.storage.local.get([bid], (result) => {
         if (result[bid]) {
-            chrome.storage.sync.get('type', (res) => {
+            chrome.storage.local.get('type', (res) => {
                 if (res.type === 'remove') {
                     card.closest('div.card-grid-cell').remove();
                 } else {
@@ -130,7 +130,7 @@ function addBlocks() {
 
     const bid = getObjectIDFromObjectPage(document);
 
-    chrome.storage.sync.get(`desc-${bid}`, (result) => {
+    chrome.storage.local.get(`desc-${bid}`, (result) => {
         if (result[`desc-${bid}`]) {
             desc.value = result[`desc-${bid}`];
         }
@@ -147,7 +147,7 @@ function addBlocks() {
     saveButton.addEventListener('click', () => {
         const d = {};
         d[`desc-${bid}`] = desc.value;
-        chrome.storage.sync.set(d, () => {
+        chrome.storage.local.set(d, () => {
             desc.style.backgroundColor = 'lightgreen';
             // set new description
         });

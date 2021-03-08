@@ -1,6 +1,6 @@
 // eslint-disable-next-line no-unused-vars
 function exportValues() {
-    chrome.storage.sync.get(null, (items) => { // null implies all items
+    chrome.storage.local.get(null, (items) => { // null implies all items
     // Convert object to a string.
         const result = JSON.stringify(items);
 
@@ -14,7 +14,7 @@ function exportValues() {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-    chrome.storage.sync.get(['type'], (result) => {
+    chrome.storage.local.get(['type'], (result) => {
         document.getElementById('type').value = result;
     });
 
@@ -24,7 +24,7 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('form_submit').addEventListener('click', (event) => {
         event.preventDefault();
         const type = document.getElementById('type').value;
-        chrome.storage.sync.set({ type }, () => {
+        chrome.storage.local.set({ type }, () => {
         });
     });
 }, false);
