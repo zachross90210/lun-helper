@@ -5,7 +5,7 @@ function exportValues() {
         const result = JSON.stringify(items);
 
         // Save as file
-        const url = `data:application/json;base64,${btoa(result)}`;
+        const url = `data:application/json;base64,${btoa(unescape(encodeURIComponent(result)))}`;
         chrome.downloads.download({
             url,
             filename: 'filename_of_exported_file.json',
