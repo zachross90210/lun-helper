@@ -155,7 +155,8 @@ function addBlocks() {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-    if (document.location.href.includes('%D0%B6%D0%BA-')) { // жк-
+    console.log(123, document.location.href)
+    if (document.location.href.includes('%D0%B6%D0%BA-') || document.location.href.includes('жк-')) { // жк-
         // "building page"
         addBlocks();
     } else if (document.querySelectorAll('#search-results').length > 0) {
