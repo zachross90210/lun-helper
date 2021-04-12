@@ -3,11 +3,16 @@
 }
 
 .redBlock {
+    background-color: white;
     border: 0.2em solid green;
     height: 50em;
     width: 40em;
     position: fixed;
     margin-left: 0.5em;
+}
+
+.index100 {
+    z-index: 100;
 }
 
 .saveButton {

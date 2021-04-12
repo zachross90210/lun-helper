@@ -123,6 +123,7 @@ function addBlocks() {
     title.textContent = 'Минусы комплекса:';
     newBlocksDIv.appendChild(title);
     newBlocksDIv.classList.add('redBlock');
+    newBlocksDIv.classList.add('index100');
     buildingDiv.insertBefore(newBlocksDIv, buildingDiv.firstChild);
 
     const desc = document.createElement('textarea');
