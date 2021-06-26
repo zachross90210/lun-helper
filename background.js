@@ -1,9 +1,10 @@
 function makeCardWhite(card) {
-    card.classList.remove('redBg');
+    card.parentNode.parentNode.classList.add('redBg');
 }
 
 function makeCardRed(card) {
-    card.classList.add('redBg');
+    // card.classList.add('redBg');
+    card.parentNode.parentNode.classList.add('redBg');
 }
 
 function updateObject(bid, mode, card) {
@@ -66,7 +67,7 @@ function addHideButton(card, oid, isHidden) {
 
     // hide button
     const hideButton = document.createElement('button');
-    hideButton.setAttribute('style', `background-color: ${color};`);
+    hideButton.setAttribute('style', `background-color: ${color};color: white;`);
     hideButton.setAttribute('class', 'hideButton');
     hideButton.textContent = text;
     hideButton.addEventListener('click', () => hide(oid, card));
@@ -74,9 +75,15 @@ function addHideButton(card, oid, isHidden) {
     // add button to block
     hideDiv.append(hideButton);
 
+    const br = document.createElement('br');
+    const hr = document.createElement('hr');
+    hideDiv.append(br);
+    hideDiv.append(br);
+    hideDiv.append(hr);
+
     // insert hide block before link
-    const a = card.querySelector('a');
-    card.insertBefore(hideDiv, a.querySelector('a.card-media'));
+    const favorites = card.parentNode.parentNode;
+    favorites.parentNode.insertBefore(hideDiv, favorites.nextSibling);
 }
 
 function MarkIfHidden(oid, card) {
@@ -97,7 +104,7 @@ function MarkIfHidden(oid, card) {
 }
 
 function getObjectID(card) {
-    return card.querySelector('div.favorite').getAttribute('data-favorites')
+    return card.querySelector('div.UIFavoriteButton').getAttribute('data-favorites')
         .split('-')[1];
 }
 
@@ -107,7 +114,7 @@ function getObjectIDFromObjectPage(page) {
 }
 
 function processObjects() {
-    document.querySelectorAll('div.card').forEach((card) => {
+    document.querySelectorAll('div.Card-inner').forEach((card) => {
         // Object ID
         const oid = getObjectID(card);
 
@@ -156,7 +163,6 @@ function addBlocks() {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-    console.log(123, document.location.href)
     if (document.location.href.includes('%D0%B6%D0%BA-') || document.location.href.includes('жк-')) { // жк-
         // "building page"
         addBlocks();

@@ -1,5 +1,6 @@
 .redBg {
     background-color: rgba(250,0,0,0.2) !important;
+    z-index: 1000;
 }
 
 .redBlock {
