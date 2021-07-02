@@ -1,5 +1,5 @@
 function makeCardWhite(card) {
-    card.parentNode.parentNode.classList.add('redBg');
+    card.parentNode.parentNode.classList.remove('redBg');
 }
 
 function makeCardRed(card) {
