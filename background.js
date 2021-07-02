@@ -53,6 +53,8 @@ function addHideButton(card, oid, isHidden) {
     const hideDiv = document.createElement('div');
     hideDiv.setAttribute('class', 'button -icon favorite');
     hideDiv.setAttribute('style', 'right: 50px;');
+    hideDiv.setAttribute('style', 'margin-botton: 1em;');
+    hideDiv.setAttribute('class', 'buttonArea -ghost-light');
 
     let color;
     let text;
@@ -78,12 +80,12 @@ function addHideButton(card, oid, isHidden) {
     const br = document.createElement('br');
     const hr = document.createElement('hr');
     hideDiv.append(br);
-    hideDiv.append(br);
     hideDiv.append(hr);
 
     // insert hide block before link
-    const favorites = card.parentNode.parentNode;
-    favorites.parentNode.insertBefore(hideDiv, favorites.nextSibling);
+    const target = card.querySelector('div.UIFavoriteButton');
+    console.log(card, target);
+    target.parentNode.insertBefore(hideDiv, target);
 }
 
 function MarkIfHidden(oid, card) {
