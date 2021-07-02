@@ -72,7 +72,10 @@ function addHideButton(card, oid, isHidden) {
     hideButton.setAttribute('style', `background-color: ${color};color: white;`);
     hideButton.setAttribute('class', 'hideButton');
     hideButton.textContent = text;
-    hideButton.addEventListener('click', () => hide(oid, card));
+    hideButton.addEventListener('click', (event) => {
+        event.preventDefault();
+        return hide(oid, card);
+    });
 
     // add button to block
     hideDiv.append(hideButton);
@@ -84,7 +87,6 @@ function addHideButton(card, oid, isHidden) {
 
     // insert hide block before link
     const target = card.querySelector('div.UIFavoriteButton');
-    console.log(card, target);
     target.parentNode.insertBefore(hideDiv, target);
 }
 
