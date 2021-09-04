@@ -1,10 +1,21 @@
+// remove classredBg
 function makeCardWhite(card) {
-    card.parentNode.parentNode.classList.remove('redBg');
+    const { parentNode } = card.parentNode;
+
+    // if node exists
+    if (parentNode) {
+        parentNode.classList.remove('redBg');
+    }
 }
 
+// add class redBg
 function makeCardRed(card) {
-    // card.classList.add('redBg');
-    card.parentNode.parentNode.classList.add('redBg');
+    const { parentNode } = card.parentNode;
+
+    // if node exists
+    if (parentNode) {
+        parentNode.classList.add('redBg');
+    }
 }
 
 function updateObject(bid, mode, card) {
