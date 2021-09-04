@@ -167,10 +167,14 @@ function addBlocks() {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-    if (document.location.href.includes('%D0%B6%D0%BA-') || document.location.href.includes('жк-')) { // жк-
+    if (document.querySelectorAll('input[data-event-category="view_building_about"]').length) {
+        // eslint-disable-next-line no-console
+        console.log('This is building page', window.location.href);
         // "building page"
         addBlocks();
     } else if (document.querySelectorAll('#search-results').length > 0) {
+        // eslint-disable-next-line no-console
+        console.log('This is search results page', window.location.href);
         // search results page
 
         const elementToObserve = document.getElementById('search-results');
