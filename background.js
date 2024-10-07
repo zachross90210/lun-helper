@@ -10,12 +10,8 @@ function makeCardWhite(card) {
 
 // add class redBg
 function makeCardRed(card) {
-    const { parentNode } = card.parentNode;
-
-    // if node exists
-    if (parentNode) {
-        parentNode.classList.add('redBg');
-    }
+    // add red background to the card entry
+    card.parentNode.classList.add('redBg');
 }
 
 function updateObject(bid, mode, card) {
