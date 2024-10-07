@@ -3,7 +3,7 @@
 
   "name": "lun.ua helper",
   "description": "This plugin allow to hide building",
-  "version": "0.2",
+  "version": "0.3",
 
   "permissions": [
     "storage",
