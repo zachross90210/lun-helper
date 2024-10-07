@@ -135,6 +135,21 @@ function processObjects() {
         const oid = getObjectID(card);
         console.log('process card: ' + oid);
 
+        // remove class Card-x2
+        // make all cards same dimensions
+        card.classList.remove('Card-x2');
+        const c = card.parentNode.classList;
+        c.remove('UIGrid-col-6');
+        c.remove('UIGrid-col-6');
+        c.remove('UIGrid-col-lg-8');
+        c.remove('UIGrid-col-md-12');
+        c.remove('UIGrid-col-xs-12');
+        c.add('UIGrid-col-3');
+        c.add('UIGrid-col-lg-4');
+        c.add('UIGrid-col-md-6');
+        c.add('UIGrid-col-xs-6');
+
+
         // mark card by red background if is hidden
         MarkIfHidden(oid, card);
     });
