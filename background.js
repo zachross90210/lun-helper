@@ -129,7 +129,7 @@ function getObjectIDFromObjectPage(page) {
 }
 
 function processObjects() {
-    document.querySelectorAll('div.Card-inner').forEach((card) => {
+    document.querySelectorAll('div.Card').forEach((card) => {
         // Object ID
         const oid = getObjectID(card);
 
