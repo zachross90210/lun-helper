@@ -1,11 +1,6 @@
-// remove classredBg
 function makeCardWhite(card) {
-    const { parentNode } = card.parentNode;
-
-    // if node exists
-    if (parentNode) {
-        parentNode.classList.remove('redBg');
-    }
+    // remove card red background
+    card.parentNode.classList.remove('redBg');
 }
 
 // add class redBg
@@ -15,9 +10,11 @@ function makeCardRed(card) {
 }
 
 function updateObject(bid, mode, card) {
-    const hButton = card.querySelector('.hideButton');
     const item = {};
     item[bid] = mode;
+    const oid = bid.replace('b-', ''); // remove db prefix
+    const hButton = card.querySelector('#hideButton-' + oid);
+    console.log('.hideButton-' + oid);
 
     chrome.storage.local.set(item, () => {
         chrome.storage.local.get('type', (res) => {
@@ -27,17 +24,17 @@ function updateObject(bid, mode, card) {
                         makeCardWhite(card);
                     }
 
-                    hButton.textContent = 'hide';
-                    hButton.setAttribute('style', 'background-color: red;');
-                    // hButton.setAttribute('style', 'color: black;');
+                   hButton.textContent = 'hide';
+                   hButton.setAttribute('style', 'background-color: red;');
                 } else if (mode) {
                     if (res.type === 'remove') {
                         card.closest('div.UIGrid-col-3').remove();
                     } else {
                         makeCardRed(card);
                     }
-                    hButton.textContent = 'show';
-                    hButton.setAttribute('style', 'background-color: green;');
+
+                   hButton.textContent = 'show';
+                   hButton.setAttribute('style', 'background-color: green;');
                 }
             }
         });
@@ -56,12 +53,17 @@ function hide(oid, card) {
 }
 
 function addHideButton(card, oid, isHidden) {
+    // delete existing hide button
+    // card.querySelector('#hideButton-' + oid);
+    // card.querySelector('#hideButton-' + oid);
+
     // button hide block
     const hideDiv = document.createElement('div');
     hideDiv.setAttribute('class', 'button -icon favorite');
     hideDiv.setAttribute('style', 'right: 50px;');
-    hideDiv.setAttribute('style', 'margin-botton: 1em;');
+    hideDiv.setAttribute('style', 'margin-bottom: 1em;');
     hideDiv.setAttribute('class', 'buttonArea -ghost-light');
+    hideDiv.setAttribute('id', 'div-hideButton-' + oid);
 
     let color;
     let text;
@@ -78,6 +80,7 @@ function addHideButton(card, oid, isHidden) {
     const hideButton = document.createElement('button');
     hideButton.setAttribute('style', `background-color: ${color};color: white;`);
     hideButton.setAttribute('class', 'hideButton');
+    hideButton.setAttribute('id', 'hideButton-' + oid);
     hideButton.textContent = text;
     hideButton.addEventListener('click', (event) => {
         event.preventDefault();
@@ -85,16 +88,17 @@ function addHideButton(card, oid, isHidden) {
     });
 
     // add button to block
-    hideDiv.append(hideButton);
+    hideDiv.appendChild(hideButton);
 
     const br = document.createElement('br');
     const hr = document.createElement('hr');
-    hideDiv.append(br);
-    hideDiv.append(hr);
+    hideDiv.appendChild(br);
+    hideDiv.appendChild(hr);
 
     // insert hide block before link
-    const target = card.querySelector('div.UIFavoriteButton');
-    target.parentNode.insertBefore(hideDiv, target);
+    const target = card.querySelector('div[class="Card-favorite"]');
+    console.log(hideDiv.innerHTML)
+    target.insertBefore(hideDiv, target.firstChild);
 }
 
 function MarkIfHidden(oid, card) {
@@ -109,7 +113,7 @@ function MarkIfHidden(oid, card) {
                 }
             });
         }
-
+        console.log('add hide button for object id: ' + bid);
         addHideButton(card, oid, result[bid]);
     });
 }
@@ -125,9 +129,11 @@ function getObjectIDFromObjectPage(page) {
 }
 
 function processObjects() {
+    console.log('process objects');
     document.querySelectorAll('div.Card').forEach((card) => {
         // Object ID
         const oid = getObjectID(card);
+        console.log('process card: ' + oid);
 
         // mark card by red background if is hidden
         MarkIfHidden(oid, card);
@@ -174,6 +180,7 @@ function addBlocks() {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
+    console.log('DOM content loaded');
     if (document.querySelectorAll('input[data-event-category="view_building_about"]').length) {
         // eslint-disable-next-line no-console
         console.log('This is building page', window.location.href);
@@ -203,4 +210,4 @@ document.addEventListener('DOMContentLoaded', () => {
         // process objects filtering on initial page load
         processObjects();
     }
-});
+}, { once: true }); // prevent DOM load event calls twice
