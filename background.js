@@ -28,7 +28,7 @@ function updateObject(bid, mode, card) {
                    hButton.setAttribute('style', 'background-color: red;');
                 } else if (mode) {
                     if (res.type === 'remove') {
-                        card.closest('div.UIGrid-col-3').remove();
+                        card.parentNode.remove();
                     } else {
                         makeCardRed(card);
                     }
@@ -107,7 +107,7 @@ function MarkIfHidden(oid, card) {
         if (result[bid]) {
             chrome.storage.local.get('type', (res) => {
                 if (res.type === 'remove') {
-                    card.closest('div.UIGrid-col-3').remove();
+                    card.parentNode.remove();
                 } else {
                     makeCardRed(card);
                 }
