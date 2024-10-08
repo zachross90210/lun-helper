@@ -135,7 +135,6 @@ function addToggleButton(card, oid, isHidden) {
 
     // insert hide block before link
     const target = card.querySelector('div[class="Card-favorite"]');
-    console.log(buttonToggleBlock.innerHTML)
     target.insertBefore(buttonToggleBlock, target.firstChild);
 }
 

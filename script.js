@@ -12,52 +12,61 @@ function importValues() {
             console.log(`added ${entry[0]}`);
         });
     });
-
-    chrome.storage.local.get(null, (items) => { // null implies all items
-    // Convert object to a string.
-        const result = JSON.stringify(items);
-
-        // Save as file
-        const url = `data:application/json;base64,${btoa(result)}`;
-        chrome.downloads.download({
-            url,
-            filename: 'filename_of_exported_file.json',
-        });
-    });
 }
 
 // eslint-disable-next-line no-unused-vars
 function exportValues() {
     chrome.storage.local.get(null, (items) => { // null implies all items
-    // Convert object to a string.
+        // Convert object to a string.
         const result = JSON.stringify(items);
 
         // Save as file
         const url = `data:application/json;base64,${btoa(unescape(encodeURIComponent(result)))}`;
         chrome.downloads.download({
             url,
-            filename: 'filename_of_exported_file.json',
+            filename: 'lun_helper_export.json',
         });
     });
 }
 
 document.addEventListener('DOMContentLoaded', () => {
+    // fetch remove/hide type
     chrome.storage.local.get(['type'], (result) => {
-        document.getElementById('type').value = result;
+        try {
+            document.getElementById('type').value = result;
+
+        } catch (error) {
+            console.error('settings frame is not open, unable to set type');
+        }
+
+        // import button click handle
+        try {
+            const importButton = document.getElementById('importButton');
+            importButton.addEventListener('click', () => importValues());
+        } catch (error) {
+            console.error('settings frame is not open unable to set listener to import button');
+        }
+
+
+        // import button click handle
+        try {
+            const exportButton = document.getElementById('exportButton');
+            exportButton.addEventListener('click', () => exportValues());
+        } catch (error) {
+            console.error('settings frame is not open unable to set listener to export button');
+        }
+
+        // add form submit handler
+        try {
+            document.getElementById('form_submit').addEventListener('click', (event) => {
+                event.preventDefault();
+                const type = document.getElementById('type').value;
+                chrome.storage.local.set({ type }, () => {
+                });
+            });    
+        } catch (error) {
+            console.error('settings frame is not open unable to set listener to form submit');
+        }
+    
     });
-
-    // import button click handle
-    const importButton = document.getElementById('importButton');
-    importButton.addEventListener('click', () => importValues());
-
-    // import button click handle
-    const exportButton = document.getElementById('exportButton');
-    exportButton.addEventListener('click', () => exportValues());
-
-    document.getElementById('form_submit').addEventListener('click', (event) => {
-        event.preventDefault();
-        const type = document.getElementById('type').value;
-        chrome.storage.local.set({ type }, () => {
-        });
-    });
-}, false);
+}, { once: true });
