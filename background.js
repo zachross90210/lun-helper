@@ -12,46 +12,69 @@ With the extension, you can simply press the "Hide" button on any building you d
 */
 
 
-function makeCardWhite(card) {
+function makeCardWhite(card, id) {
     // remove card Red background
     // means remove entry from excluded
+    console.log(`mark object with id: ${id} LISTED(white)`);
     card.parentNode.classList.remove('redBg');
 }
 
 // add class redBg
-function makeCardRed(card) {
+function makeCardRed(card, id) {
     // add Red background to the card entry
     // means adding entry to excluded
+    console.log(`mark object with id: ${id} EXCLUDED(red)`);
     card.parentNode.classList.add('redBg');
 }
 
-function updateObject(entryDbId, mode, card) {
+function swapToggleButton(card, toggleButtonId, isHidden) {
+    // here we do swap operation
+    // swap show to hide, green to red and backwards
+    const toggleButton = card.querySelector(toggleButtonId);
+
+
+    if (isHidden === true) {
+        console.log(`toggleButton set text "hide" and style "red"`);
+        toggleButton.textContent = 'hide';
+        toggleButton.setAttribute('style', 'background-color: red;');
+    } else {
+        console.log(`toggleButton set text "show" and style "green"`);
+        toggleButton.textContent = 'show';
+        toggleButton.setAttribute('style', 'background-color: green;');        
+    }
+}
+
+
+function updateObject(entryDbId, isHidden, card) {
     const item = {};
-    const oid = entryDbId.replace('b-', ''); // remove db prefix
-    const hButton = card.querySelector('#hideButton-' + oid);
+    const objectId = entryDbId.replace('b-', ''); // remove db prefix
+    const toggleButtonId = `#toggleButton-${objectId}`;
 
-    item[entryDbId] = mode;
-    console.log('.hideButton-' + oid);
 
+    item[entryDbId] = isHidden; // set hidden property to object. TRUE means hidden
+    console.log(`toggle button is ${toggleButtonId}`);
+
+    // set selected entry with new hidden value
+    // then update button on data return
     chrome.storage.local.set(item, () => {
-        chrome.storage.local.get('type', (res) => {
+        chrome.storage.local.get('type', (res) => {  // type is hide "type", could be "mark" (mark red) or "remove"
             if (card) {
-                if (!mode) {
+                if (!isHidden) { // object is not hidden
                     if (res.type === 'mark') {
-                        makeCardWhite(card);
+                        makeCardWhite(card, objectId);
                     }
 
-                   hButton.textContent = 'hide';
-                   hButton.setAttribute('style', 'background-color: red;');
-                } else if (mode) {
+                    // swap toggle button
+                    swapToggleButton(card, toggleButtonId, true);
+                } else if (isHidden) { // object is hidden
                     if (res.type === 'remove') {
                         card.parentNode.remove();
                     } else {
-                        makeCardRed(card);
+                        makeCardRed(card, objectId);
                     }
-
-                   hButton.textContent = 'show';
-                   hButton.setAttribute('style', 'background-color: green;');
+                    
+                    // swap toggle button
+                    swapToggleButton(card, toggleButtonId, false);
                 }
             }
         });
@@ -59,6 +82,8 @@ function updateObject(entryDbId, mode, card) {
 }
 
 function hide(oid, card) {
+    // save object to database
+    // and update toggle button
     const entryDbId = `b-${oid}`;
     chrome.storage.local.get([entryDbId], (result) => {
         if (result[entryDbId]) {
@@ -69,18 +94,14 @@ function hide(oid, card) {
     });
 }
 
-function addHideButton(card, oid, isHidden) {
-    // delete existing hide button
-    // card.querySelector('#hideButton-' + oid);
-    // card.querySelector('#hideButton-' + oid);
-
-    // button hide block
-    const hideDiv = document.createElement('div');
-    hideDiv.setAttribute('class', 'button -icon favorite');
-    hideDiv.setAttribute('style', 'right: 50px;');
-    hideDiv.setAttribute('style', 'margin-bottom: 1em;');
-    hideDiv.setAttribute('class', 'buttonArea -ghost-light');
-    hideDiv.setAttribute('id', 'div-hideButton-' + oid);
+function addToggleButton(card, oid, isHidden) {
+    // create button block
+    const buttonToggleBlock = document.createElement('div');
+    buttonToggleBlock.setAttribute('class', 'button -icon favorite');
+    buttonToggleBlock.setAttribute('style', 'right: 50px;');
+    buttonToggleBlock.setAttribute('style', 'margin-bottom: 1em;');
+    buttonToggleBlock.setAttribute('class', 'buttonArea -ghost-light');
+    buttonToggleBlock.setAttribute('id', `div-toggleButton-${oid}`);
 
     let color;
     let text;
@@ -93,29 +114,29 @@ function addHideButton(card, oid, isHidden) {
         text = 'hide';
     }
 
-    // hide button
-    const hideButton = document.createElement('button');
-    hideButton.setAttribute('style', `background-color: ${color};color: white;`);
-    hideButton.setAttribute('class', 'hideButton');
-    hideButton.setAttribute('id', 'hideButton-' + oid);
-    hideButton.textContent = text;
-    hideButton.addEventListener('click', (event) => {
+    // toggle button
+    const toggleButton = document.createElement('button');
+    toggleButton.setAttribute('style', `background-color: ${color};color: white;`);
+    toggleButton.setAttribute('class', 'toggleButton');
+    toggleButton.setAttribute('id', `toggleButton-${oid}`);
+    toggleButton.textContent = text;
+    toggleButton.addEventListener('click', (event) => {
         event.preventDefault();
         return hide(oid, card);
     });
 
     // add button to block
-    hideDiv.appendChild(hideButton);
+    buttonToggleBlock.appendChild(toggleButton);
 
     const br = document.createElement('br');
     const hr = document.createElement('hr');
-    hideDiv.appendChild(br);
-    hideDiv.appendChild(hr);
+    buttonToggleBlock.appendChild(br);
+    buttonToggleBlock.appendChild(hr);
 
     // insert hide block before link
     const target = card.querySelector('div[class="Card-favorite"]');
-    console.log(hideDiv.innerHTML)
-    target.insertBefore(hideDiv, target.firstChild);
+    console.log(buttonToggleBlock.innerHTML)
+    target.insertBefore(buttonToggleBlock, target.firstChild);
 }
 
 function MarkIfHidden(oid, card) {
@@ -130,17 +151,19 @@ function MarkIfHidden(oid, card) {
                 }
             });
         }
-        console.log('add hide button for object id: ' + bid);
-        addHideButton(card, oid, result[bid]);
+        console.log(`add hide button for object id: ${bid}`);
+        addToggleButton(card, oid, result[bid]);
     });
 }
 
 function getObjectID(card) {
+    // get object ID from list page
     return card.querySelector('div.UIFavoriteButton').getAttribute('data-favorites')
         .split('-')[1];
 }
 
 function getObjectIDFromObjectPage(page) {
+    // get object ID from object (detail) page
     return page.querySelector('div.UIFavoriteButton').getAttribute('data-favorites')
         .split('-')[1];
 }
@@ -150,22 +173,21 @@ function processObjects() {
     document.querySelectorAll('div.Card').forEach((card) => {
         // Object ID
         const oid = getObjectID(card);
-        console.log('process card: ' + oid);
+        console.log(`process card: ${oid}`);
+
+        // Some cards have bigger format
+        // this code make all cards same dimensions
 
         // remove class Card-x2
-        // make all cards same dimensions
         card.classList.remove('Card-x2');
-        const c = card.parentNode.classList;
-        c.remove('UIGrid-col-6');
-        c.remove('UIGrid-col-6');
-        c.remove('UIGrid-col-lg-8');
-        c.remove('UIGrid-col-md-12');
-        c.remove('UIGrid-col-xs-12');
-        c.add('UIGrid-col-3');
-        c.add('UIGrid-col-lg-4');
-        c.add('UIGrid-col-md-6');
-        c.add('UIGrid-col-xs-6');
+        const parentClasses = card.parentNode.classList;
 
+        // Remove all existing column classes in one go
+        parentClasses.remove('UIGrid-col-6', 'UIGrid-col-lg-8', 'UIGrid-col-md-12', 'UIGrid-col-xs-12');
+
+        // Add the desired column classes
+        parentClasses.add('UIGrid-col-3', 'UIGrid-col-lg-4', 'UIGrid-col-md-6', 'UIGrid-col-xs-6');
+    
 
         // mark card by red background if is hidden
         MarkIfHidden(oid, card);
