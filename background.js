@@ -1,5 +1,20 @@
+/*
+  This is chrome extension that help a bit to use site https://lun.ua
+   that website represents a list of residential buildings under construction.
+
+  There thousands of objects listed and website does not have functionality to hide unwanted buildings!
+  So this extension will help with that!
+
+  In case some building you dont want to see in listing you press button "Hide" and that dissapears.
+
+  Then you can export list of excluded objects or import them.
+  
+*/
+
+
 function makeCardWhite(card) {
     // remove card red background
+    // means remove entry from excluded
     card.parentNode.classList.remove('redBg');
 }
 
@@ -9,11 +24,12 @@ function makeCardRed(card) {
     card.parentNode.classList.add('redBg');
 }
 
-function updateObject(bid, mode, card) {
+function updateObject(entryDbId, mode, card) {
     const item = {};
-    item[bid] = mode;
-    const oid = bid.replace('b-', ''); // remove db prefix
+    const oid = entryDbId.replace('b-', ''); // remove db prefix
     const hButton = card.querySelector('#hideButton-' + oid);
+
+    item[entryDbId] = mode;
     console.log('.hideButton-' + oid);
 
     chrome.storage.local.set(item, () => {
@@ -42,12 +58,12 @@ function updateObject(bid, mode, card) {
 }
 
 function hide(oid, card) {
-    const bid = `b-${oid}`;
-    chrome.storage.local.get([bid], (result) => {
-        if (result[bid]) {
-            updateObject(bid, false, card);
+    const entryDbId = `b-${oid}`;
+    chrome.storage.local.get([entryDbId], (result) => {
+        if (result[entryDbId]) {
+            updateObject(entryDbId, false, card);
         } else {
-            updateObject(bid, true, card);
+            updateObject(entryDbId, true, card);
         }
     });
 }
