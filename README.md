@@ -1,6 +1,17 @@
-This is chrome extension for website http://lun.ua
+# Lun-helper (chrome extension)
 
-The only one functionality of this plugin is mark objects with possibility to hide them later.  
+This is a Chrome extension designed to enhance the user experience on https://lun.ua,
+ a website that lists thousands of residential buildings under construction.
+
+One key feature missing from the site is the ability to hide unwanted buildings from the list,
+ and that's where this extension comes in!
+
+With the extension, you can simply press the "Hide" button on any building you don't want to see,
+ and it will disappear from the listing.
+  You can also export your list of hidden buildings or import it later for easy management.
+
+---
+  
 ![alt text](https://raw.githubusercontent.com/rostyslavnikitin/lun-helper/master/screens/mark.png)
 
 Also, you can add description for each object on the detail page. Do not forget to click save button!
