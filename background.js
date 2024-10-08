@@ -1,26 +1,27 @@
 /*
-  This is chrome extension that help a bit to use site https://lun.ua
-   that website represents a list of residential buildings under construction.
+This is a Chrome extension designed to enhance the user experience on https://lun.ua,
+ a website that lists thousands of residential buildings under construction.
 
-  There thousands of objects listed and website does not have functionality to hide unwanted buildings!
-  So this extension will help with that!
+One key feature missing from the site is the ability to hide unwanted buildings from the list,
+ and that's where this extension comes in!
 
-  In case some building you dont want to see in listing you press button "Hide" and that dissapears.
+With the extension, you can simply press the "Hide" button on any building you don't want to see,
+ and it will disappear from the listing.
+  You can also export your list of hidden buildings or import it later for easy management.
 
-  Then you can export list of excluded objects or import them.
-  
 */
 
 
 function makeCardWhite(card) {
-    // remove card red background
+    // remove card Red background
     // means remove entry from excluded
     card.parentNode.classList.remove('redBg');
 }
 
 // add class redBg
 function makeCardRed(card) {
-    // add red background to the card entry
+    // add Red background to the card entry
+    // means adding entry to excluded
     card.parentNode.classList.add('redBg');
 }
 
