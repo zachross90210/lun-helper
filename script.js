@@ -21,7 +21,7 @@ function exportValues() {
         const result = JSON.stringify(items);
 
         // Save as file
-        const url = `data:application/json;base64,${btoa(unescape(encodeURIComponent(result)))}`;
+        const url = `data:application/json;base64,${b64EncodeUnicode(result)}`;
         chrome.downloads.download({
             url,
             filename: 'lun_helper_export.json',
