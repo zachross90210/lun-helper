@@ -1,11 +1,24 @@
-// eslint-disable-next-line no-unused-vars
+function b64EncodeUnicode(str) {
+    // first we use encodeURIComponent to get percent-encoded UTF-8,
+    // then we convert the percent encodings into raw bytes which
+    // can be fed into btoa.
+    return btoa(
+      encodeURIComponent(str).replace(
+        /%([0-9A-F]{2})/g,
+        function toSolidBytes(match, p1) {
+          return String.fromCharCode(`0x${p1}`);
+        },
+      ),
+    );
+  }
+  
+
 function importValues() {
     const text = document.getElementById('importData').value;
     const data = JSON.parse(text);
 
     Object.entries(data).forEach((entry) => {
         const item = {};
-        // eslint-disable-next-line prefer-destructuring
         item[entry[0]] = entry[1];
         chrome.storage.local.set(item, () => {
             // eslint-disable-next-line no-console
@@ -14,11 +27,12 @@ function importValues() {
     });
 }
 
-// eslint-disable-next-line no-unused-vars
+
 function exportValues() {
     chrome.storage.local.get(null, (items) => { // null implies all items
         // Convert object to a string.
         const result = JSON.stringify(items);
+        console.log(result)
 
         // Save as file
         const url = `data:application/json;base64,${b64EncodeUnicode(result)}`;
@@ -60,6 +74,7 @@ document.addEventListener('DOMContentLoaded', () => {
         try {
             document.getElementById('form_submit').addEventListener('click', (event) => {
                 event.preventDefault();
+
                 const type = document.getElementById('type').value;
                 chrome.storage.local.set({ type }, () => {
                 });
