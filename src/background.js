@@ -11,7 +11,6 @@ With the extension, you can simply press the "Hide" button on any building you d
 
 */
 
-
 function makeCardWhite(card, id) {
     // remove card Red background
     // means remove entry from excluded

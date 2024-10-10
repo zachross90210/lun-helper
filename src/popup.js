@@ -1,3 +1,6 @@
+import { createClient } from '@supabase/supabase-js';
+import './popup.css';
+
 function b64EncodeUnicode(str) {
     // first we use encodeURIComponent to get percent-encoded UTF-8,
     // then we convert the percent encodings into raw bytes which
@@ -11,11 +14,11 @@ function b64EncodeUnicode(str) {
       ),
     );
   }
-  
 
 function importValues() {
     const text = document.getElementById('importData').value;
     const data = JSON.parse(text);
+    console.log(data)
 
     Object.entries(data).forEach((entry) => {
         const item = {};
@@ -45,9 +48,19 @@ function exportValues() {
 
 document.addEventListener('DOMContentLoaded', () => {
     // fetch remove/hide type
-    chrome.storage.local.get(['type'], (result) => {
+    chrome.storage.local.get(['dbHost', 'hideType', 'supaBaseKey'], (config) => {
+        // connect to supabase
         try {
-            document.getElementById('type').value = result;
+            const supabase = createClient(config.dbHost, config.supaBaseKey);
+            console.log(supabase);
+        } catch (error) {
+            console.error('supabase connection failed');
+        }
+
+
+
+        try {
+            document.getElementById('type').value = config.hideType;
 
         } catch (error) {
             console.error('settings frame is not open, unable to set type');
