@@ -8,3 +8,19 @@
 	top: 46px;
 	z-index: 1
 }
+
+.buttonArea {
+	display: -webkit-inline-flex;
+	display: inline-flex;
+	-webkit-align-items: center;
+	align-items: center;
+	padding: 6px;
+	color: rgba(0, 0, 0, .84);
+	letter-spacing: .5px;
+	background-color: #fff;
+	border-radius: 8px;
+	cursor: pointer;
+	white-space: nowrap;
+	transition: all .25s ease-out;
+	box-shadow: 0 0 4px rgba(0, 0, 0, .05), 0 4px 8px rgba(0, 0, 0, .1)
+}
