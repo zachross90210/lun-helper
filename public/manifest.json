@@ -24,7 +24,6 @@
   },
 
   "content_scripts": [ {
-  
   "css": ["background.css"],
   "matches": [
     "*://lun.ua/uk/*",
