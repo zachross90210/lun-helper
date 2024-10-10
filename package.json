@@ -23,7 +23,8 @@
   "license": "ISC",
   "homepage": "https://github.com/zachross25/lun-helper#readme",
   "dependencies": {
-    "@supabase/supabase-js": "^2.45.4"
+    "@supabase/supabase-js": "^2.45.4",
+    "chrome-types": "^0.1.308"
   },
   "devDependencies": {
     "adm-zip": "^0.5.16",
