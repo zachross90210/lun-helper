@@ -60,7 +60,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
         try {
-            document.getElementById('type').value = config.hideType;
+            document.getElementById('hideType').value = config.hideType;
 
         } catch (error) {
             console.error('settings frame is not open, unable to set type');

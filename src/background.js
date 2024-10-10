@@ -56,17 +56,17 @@ function updateObject(entryDbId, isHidden, card) {
     // set selected entry with new hidden value
     // then update button on data return
     chrome.storage.local.set(item, () => {
-        chrome.storage.local.get('type', (res) => {  // type is hide "type", could be "mark" (mark red) or "remove"
+        chrome.storage.local.get('type', (config) => {  // type is hide "type", could be "mark" (mark red) or "remove"
             if (card) {
                 if (!isHidden) { // object is not hidden
-                    if (res.type === 'mark') {
+                    if (config.hideType === 'mark' || config.hideType === undefined) {
                         makeCardWhite(card, objectId);
                     }
 
                     // swap toggle button
                     swapToggleButton(card, toggleButtonId, true);
                 } else if (isHidden) { // object is hidden
-                    if (res.type === 'remove') {
+                    if (config.hideType === 'remove') {
                         card.parentNode.remove();
                     } else {
                         makeCardRed(card, objectId);
@@ -141,8 +141,8 @@ function MarkIfHidden(oid, card) {
     const bid = `b-${oid}`;
     return chrome.storage.local.get([bid], (result) => {
         if (result[bid]) {
-            chrome.storage.local.get('type', (res) => {
-                if (res.type === 'remove') {
+            chrome.storage.local.get('hideType', (config) => {
+                if (config.hideType === 'remove') {
                     card.parentNode.remove();
                 } else {
                     makeCardRed(card);
