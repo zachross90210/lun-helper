@@ -2,7 +2,7 @@
   "manifest_version": 2,
 
   "name": "lun.ua helper",
-  "description": "This plugin allow to hide building",
+  "description": "This is a Chrome extension designed to enhance the user experience on https://lun.ua",
   "version": "0.3",
 
   "permissions": [
