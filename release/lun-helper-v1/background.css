@@ -1,0 +1,10 @@
+.redBg {
+    background-color: rgba(250,0,0,0.2) !important;
+}
+
+.Card .buttonArea {
+	position: absolute;
+	right: 8px;
+	top: 46px;
+	z-index: 1
+}
