@@ -1,18 +1,24 @@
 {
-  "manifest_version": 2,
+  "manifest_version": 3,
 
   "name": "lun.ua helper",
   "description": "This is a Chrome extension designed to enhance the user experience on https://lun.ua",
-  "version": "0.3",
+  "version": "0.4",
 
   "permissions": [
     "storage",
     "activeTab",
-    "https://ajax.googleapis.com/",
     "downloads"
   ],
-  "content_security_policy": "script-src 'self'; object-src 'self'",
- "browser_action": {
+  "optional_permissions": [],
+  "host_permissions": [
+    "https://ajax.googleapis.com/"
+  ],
+  "optional_host_permissions": [],
+  "content_security_policy": {
+    "extension_pages": "script-src 'self'; object-src 'self'"
+  },
+ "action": {
     "default_icon": "logo.png",
     "default_popup": "popup.html"
   },
