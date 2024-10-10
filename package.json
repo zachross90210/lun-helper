@@ -1,7 +1,7 @@
 {
   "name": "lun-helper",
   "version": "1.0.0",
-  "description": "This plugin allow to hide building on lun.ua",
+  "description": "This is a Chrome extension designed to enhance the user experience on https://lun.ua",
   "main": "background.js",
   "type": "module",
   "scripts": {
@@ -14,14 +14,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+ssh://git@github.com:rostyslavnikitin/lun-helper.git"
+    "url": "git@github.com:zachross25/lun-helper.git"
   },
   "keywords": [
-    "flats"
+    "flats buildings appartments investments"
   ],
-  "author": "Rostyslav Nikitin",
+  "author": "zachross25",
   "license": "ISC",
-  "homepage": "https://github.com/rostyslavnikitin/lun-helper#readme",
+  "homepage": "https://github.com/zachross25/lun-helper#readme",
   "dependencies": {
     "@supabase/supabase-js": "^2.45.4"
   },
