@@ -19,12 +19,12 @@
     "extension_pages": "script-src 'self'; object-src 'self'"
   },
  "action": {
-    "default_icon": "logo.png",
+    "default_icon": "img/logo.png",
     "default_popup": "popup.html"
   },
 
   "content_scripts": [ {
-  "css":["style.css"],
+  "css": ["background.css"],
   "matches": [
     "*://lun.ua/uk/*",
     "*://lun.ua/ru/*",
@@ -38,7 +38,7 @@
     "*://lun.ua/*/%D0%B2%D1%81%D0%B5",
     "*://lun.ua/*/%D0%BD%D0%BE%D0%B2%D0%BE"
   ],
-  "js": ["background.js", "script.js"],
+  "js": ["background.js"],
   "run_at": "document_start"
 } ]
 }

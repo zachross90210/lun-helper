@@ -11,6 +11,8 @@ With the extension, you can simply press the "Hide" button on any building you d
 
 */
 
+import './background.css';
+import { supabase, getExcludeType } from './db.js';
 
 function makeCardWhite(card, id) {
     // remove card Red background
@@ -32,67 +34,84 @@ function swapToggleButton(card, toggleButtonId, isHidden) {
     // swap show to hide, green to red and backwards
     const toggleButton = card.querySelector(toggleButtonId);
 
-
     if (isHidden === true) {
-        console.log(`toggleButton set text "hide" and style "red"`);
+        console.log('toggleButton set text "hide" and style "red"');
         toggleButton.textContent = 'hide';
         toggleButton.setAttribute('style', 'background-color: red;');
     } else {
-        console.log(`toggleButton set text "show" and style "green"`);
+        console.log('toggleButton set text "show" and style "green"');
         toggleButton.textContent = 'show';
-        toggleButton.setAttribute('style', 'background-color: green;');        
+        toggleButton.setAttribute('style', 'background-color: green;');
     }
 }
 
-
-function updateObject(entryDbId, isHidden, card) {
+const updateObject = async (entryDbId, isHidden, card) => {
     const item = {};
-    const objectId = entryDbId.replace('b-', ''); // remove db prefix
-    const toggleButtonId = `#toggleButton-${objectId}`;
-
+    const toggleButtonId = `#toggleButton-${entryDbId}`;
+    // connect to database
+    const connection = await supabase();
+    const excludeType = await getExcludeType(connection);
 
     item[entryDbId] = isHidden; // set hidden property to object. TRUE means hidden
     console.log(`toggle button is ${toggleButtonId}`);
 
     // set selected entry with new hidden value
     // then update button on data return
-    chrome.storage.local.set(item, () => {
-        chrome.storage.local.get('type', (res) => {  // type is hide "type", could be "mark" (mark red) or "remove"
-            if (card) {
-                if (!isHidden) { // object is not hidden
-                    if (res.type === 'mark') {
-                        makeCardWhite(card, objectId);
-                    }
 
-                    // swap toggle button
-                    swapToggleButton(card, toggleButtonId, true);
-                } else if (isHidden) { // object is hidden
-                    if (res.type === 'remove') {
-                        card.parentNode.remove();
-                    } else {
-                        makeCardRed(card, objectId);
-                    }
-                    
-                    // swap toggle button
-                    swapToggleButton(card, toggleButtonId, false);
-                }
-            }
-        });
-    });
-}
+    // update entry
+    const { data: entry } = await connection
+        .from('investment_projects')
+        .update({ isHidden })
+        .eq('id', entryDbId)
+        .select();
 
-function hide(oid, card) {
+    const entryIsHidden = entry[0].isHidden;
+
+    if (!entryIsHidden) { // object is not hidden
+        if (excludeType === 'markRed' || excludeType === undefined) {
+            makeCardWhite(card, entryDbId);
+        }
+
+        // swap toggle button
+        swapToggleButton(card, toggleButtonId, true);
+    } else if (entryIsHidden) { // object is hidden
+        if (excludeType === 'remove') {
+            card.parentNode.remove();
+        } else {
+            makeCardRed(card, entryDbId);
+        }
+
+        // swap toggle button
+        swapToggleButton(card, toggleButtonId, false);
+    }
+};
+
+const hide = async (entryDbId, card) => {
     // save object to database
     // and update toggle button
-    const entryDbId = `b-${oid}`;
-    chrome.storage.local.get([entryDbId], (result) => {
-        if (result[entryDbId]) {
-            updateObject(entryDbId, false, card);
+
+    // connect to database
+    const connection = await supabase();
+    console.log(123, connection);
+    // fetch record by provided ID
+    const { data, error } = await connection
+        .from('investment_projects')
+        .select()
+        .eq('id', entryDbId);
+
+    if (error) {
+        throw error;
+    }
+
+    if (data.length) {
+        const [object] = data;
+        if (object.isHidden) {
+            await updateObject(entryDbId, false, card);
         } else {
-            updateObject(entryDbId, true, card);
+            await updateObject(entryDbId, true, card);
         }
-    });
-}
+    }
+};
 
 function addToggleButton(card, oid, isHidden) {
     // create button block
@@ -138,22 +157,16 @@ function addToggleButton(card, oid, isHidden) {
     target.insertBefore(buttonToggleBlock, target.firstChild);
 }
 
-function MarkIfHidden(oid, card) {
-    const bid = `b-${oid}`;
-    return chrome.storage.local.get([bid], (result) => {
-        if (result[bid]) {
-            chrome.storage.local.get('type', (res) => {
-                if (res.type === 'remove') {
-                    card.parentNode.remove();
-                } else {
-                    makeCardRed(card);
-                }
-            });
-        }
-        console.log(`add hide button for object id: ${bid}`);
-        addToggleButton(card, oid, result[bid]);
-    });
-}
+const markIfHidden = async (entryDbId, card, excludeType) => {
+    if (excludeType === 'remove') {
+        card.parentNode.remove();
+    } else {
+        makeCardRed(card, entryDbId);
+    }
+
+    console.log(`add hide button for object id: ${entryDbId}`);
+    addToggleButton(card, entryDbId);
+};
 
 function getObjectID(card) {
     // get object ID from list page
@@ -167,12 +180,25 @@ function getObjectIDFromObjectPage(page) {
         .split('-')[1];
 }
 
-function processObjects() {
+const processObjects = async () => {
+    // connect to database
+    const connection = await supabase();
+    const excludeType = await getExcludeType(connection);
+    const { data, error } = await connection
+        .from('investment_projects')
+        .select();
+    const hiddenList = data.reduce((result, entry) => {
+        const sub = {};
+        sub[entry.id] = entry.isHidden;
+        return { ...result, ...sub };
+    }, {});
+
     console.log('process objects');
+
     document.querySelectorAll('div.Card').forEach((card) => {
         // Object ID
-        const oid = getObjectID(card);
-        console.log(`process card: ${oid}`);
+        const entryDbId = getObjectID(card);
+        console.log(`process card: ${entryDbId}`);
 
         // Some cards have bigger format
         // this code make all cards same dimensions
@@ -186,51 +212,76 @@ function processObjects() {
 
         // Add the desired column classes
         parentClasses.add('UIGrid-col-3', 'UIGrid-col-lg-4', 'UIGrid-col-md-6', 'UIGrid-col-xs-6');
-    
 
         // mark card by red background if is hidden
-        MarkIfHidden(oid, card);
+        markIfHidden(entryDbId, card, excludeType, hiddenList[entryDbId]).then(() => {
+            console.log(`card ${entryDbId} processed`);
+        });
     });
-}
+};
 
-function addBlocks() {
+const addBlocks = async () => {
+    // connect to database
+    const connection = await supabase();
+    const { data, error } = await connection
+        .from('investment_projects')
+        .select()
+        .eq('id', entryDbId);
+    const entryDbId = getObjectIDFromObjectPage(document);
+
     const buildingDiv = document.querySelector('.Building');
     const newBlocksDIv = document.createElement('div');
-    const title = document.createElement('h3');
-    title.textContent = 'Минусы комплекса:';
-    newBlocksDIv.appendChild(title);
-    newBlocksDIv.classList.add('redBlock');
-    newBlocksDIv.classList.add('index100');
+    newBlocksDIv.classList.add('advFlawBlock', 'index100');
     buildingDiv.insertBefore(newBlocksDIv, buildingDiv.firstChild);
 
-    const desc = document.createElement('textarea');
-    desc.classList.add('descArea');
+    const faBlock1 = document.createElement('div');
+    faBlock1.classList.add('faBlock', 'marginRight05em');
+    const title = document.createElement('h3');
+    title.textContent = 'Минусы комплекса:';
+    faBlock1.appendChild(title);
 
-    const bid = getObjectIDFromObjectPage(document);
+    const desc1 = document.createElement('textarea');
+    desc1.classList.add('descArea');
 
-    chrome.storage.local.get(`desc-${bid}`, (result) => {
-        if (result[`desc-${bid}`]) {
-            desc.value = result[`desc-${bid}`];
-        }
-    });
+    if (data.length) {
+        desc1.value = data[0].flaws;
+    }
 
-    newBlocksDIv.appendChild(desc);
+    const faBlock2 = document.createElement('div');
+    faBlock2.classList.add('faBlock');
+    const title2 = document.createElement('h3');
+    title2.textContent = 'Преимущества комплекса:';
+    faBlock2.appendChild(title2);
+
+    const desc2 = document.createElement('textarea');
+    desc2.classList.add('descArea');
+    console.log(data);
+
+    if (data.length) {
+        desc2.value = data[0].advantages;
+    }
+
+    faBlock1.appendChild(desc1);
+    faBlock2.appendChild(desc2);
 
     const saveButton = document.createElement('button');
     saveButton.textContent = 'save';
 
     saveButton.classList.add('saveButton');
+    newBlocksDIv.appendChild(faBlock1);
+    newBlocksDIv.appendChild(faBlock2);
     newBlocksDIv.appendChild(saveButton);
 
     saveButton.addEventListener('click', () => {
-        const d = {};
-        d[`desc-${bid}`] = desc.value;
-        chrome.storage.local.set(d, () => {
-            desc.style.backgroundColor = 'lightgreen';
-            // set new description
-        });
+        connection.from('investment_projects')
+            .update({ flaws: desc1.value, advantages: desc2.value })
+            .eq('id', entryDbId)
+            .then(() => {
+                desc1.style.backgroundColor = 'lightgreen';
+                desc2.style.backgroundColor = 'lightgreen';
+            });
     });
-}
+};
 
 document.addEventListener('DOMContentLoaded', () => {
     console.log('DOM content loaded');
@@ -238,7 +289,9 @@ document.addEventListener('DOMContentLoaded', () => {
         // eslint-disable-next-line no-console
         console.log('This is building page', window.location.href);
         // "building page"
-        addBlocks();
+        addBlocks().then(() => {
+            console.log('forms added');
+        });
     } else if (document.querySelectorAll('#search-results').length > 0) {
         // eslint-disable-next-line no-console
         console.log('This is search results page', window.location.href);
@@ -249,7 +302,9 @@ document.addEventListener('DOMContentLoaded', () => {
         // passing it a callback function
         const observer = new MutationObserver(() => {
             // process objects filtering on SPA page changed
-            processObjects();
+            (async () => {
+                await processObjects();
+            })();
         });
 
         // call `observe` on that MutationObserver instance,
@@ -261,6 +316,8 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
         // process objects filtering on initial page load
-        processObjects();
+        (async () => {
+            await processObjects();
+        })();
     }
 }, { once: true }); // prevent DOM load event calls twice
