@@ -41,7 +41,7 @@ function swapToggleButton(card, toggleButtonId, isHidden) {
     } else {
         console.log(`toggleButton set text "show" and style "green"`);
         toggleButton.textContent = 'show';
-        toggleButton.setAttribute('style', 'background-color: green;');        
+        toggleButton.setAttribute('style', 'background-color: green;');
     }
 }
 
@@ -73,7 +73,7 @@ function updateObject(entryDbId, isHidden, card) {
                     } else {
                         makeCardRed(card, objectId);
                     }
-                    
+
                     // swap toggle button
                     swapToggleButton(card, toggleButtonId, false);
                 }
@@ -187,7 +187,7 @@ function processObjects() {
 
         // Add the desired column classes
         parentClasses.add('UIGrid-col-3', 'UIGrid-col-lg-4', 'UIGrid-col-md-6', 'UIGrid-col-xs-6');
-    
+
 
         // mark card by red background if is hidden
         MarkIfHidden(oid, card);
@@ -195,39 +195,64 @@ function processObjects() {
 }
 
 function addBlocks() {
-    const buildingDiv = document.querySelector('.Building');
-    const newBlocksDIv = document.createElement('div');
-    const title = document.createElement('h3');
-    title.textContent = 'Минусы комплекса:';
-    newBlocksDIv.appendChild(title);
-    newBlocksDIv.classList.add('redBlock');
-    newBlocksDIv.classList.add('index100');
-    buildingDiv.insertBefore(newBlocksDIv, buildingDiv.firstChild);
-
-    const desc = document.createElement('textarea');
-    desc.classList.add('descArea');
-
     const bid = getObjectIDFromObjectPage(document);
 
-    chrome.storage.local.get(`desc-${bid}`, (result) => {
-        if (result[`desc-${bid}`]) {
-            desc.value = result[`desc-${bid}`];
+    const buildingDiv = document.querySelector('.Building');
+    const newBlocksDIv = document.createElement('div');
+    newBlocksDIv.classList.add('advFlawBlock', 'index100');
+    buildingDiv.insertBefore(newBlocksDIv, buildingDiv.firstChild);
+
+    const faBlock1 = document.createElement('div');
+    faBlock1.classList.add('faBlock', 'marginRight05em');
+    const title = document.createElement('h3');
+    title.textContent = 'Минусы комплекса:';
+    faBlock1.appendChild(title);
+
+    const desc1 = document.createElement('textarea');
+    desc1.classList.add('descArea');
+
+
+    let desc = `flaws-${bid}`;
+    chrome.storage.local.get(desc, (result) => {
+        if (result[desc]) {
+            desc1.value = result[desc];
         }
     });
 
-    newBlocksDIv.appendChild(desc);
+    const faBlock2 = document.createElement('div');
+    faBlock2.classList.add('faBlock');
+    const title2 = document.createElement('h3');
+    title2.textContent = 'Преимущества комплекса:';
+    faBlock2.appendChild(title2);
+
+    const desc2 = document.createElement('textarea');
+    desc2.classList.add('descArea');
+
+    desc = `adv-${bid}`;
+    chrome.storage.local.get(desc, (result) => {
+        if (result[desc]) {
+            desc2.value = result[desc];
+        }
+    });
+
+    faBlock1.appendChild(desc1);
+    faBlock2.appendChild(desc2);
 
     const saveButton = document.createElement('button');
     saveButton.textContent = 'save';
 
     saveButton.classList.add('saveButton');
+    newBlocksDIv.appendChild(faBlock1);
+    newBlocksDIv.appendChild(faBlock2);
     newBlocksDIv.appendChild(saveButton);
 
     saveButton.addEventListener('click', () => {
         const d = {};
-        d[`desc-${bid}`] = desc.value;
+        d[`flaws-${bid}`] = desc1.value;
+        d[`adv-${bid}`] = desc2.value;
         chrome.storage.local.set(d, () => {
-            desc.style.backgroundColor = 'lightgreen';
+            desc1.style.backgroundColor = 'lightgreen';
+            desc2.style.backgroundColor = 'lightgreen';
             // set new description
         });
     });
