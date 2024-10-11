@@ -10,6 +10,7 @@ const config = (env, argv) =>
       popup: PATHS.src + '/popup.js',
       contentScript: PATHS.src + '/contentScript.js',
       background: PATHS.src + '/background.js',
+      db: PATHS.src + '/db.js',
     },
     devtool: argv.mode === 'production' ? false : 'source-map',
   });
