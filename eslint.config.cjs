@@ -1,4 +1,9 @@
 module.exports = {
+    ignores: [
+      "build/*",
+      "release/*",
+      "node_modules/*"
+    ],
     env: {
         browser: true,
         es2020: true,
@@ -28,6 +33,6 @@ module.exports = {
         indent: [
             'warn',
             4,
-        ],
+        ]
     },
 };

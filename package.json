@@ -10,7 +10,7 @@
     "pack": "node pack.js",
     "repack": "npm run build && npm run pack",
     "format": "prettier --write --ignore-unknown \"{config,public,src}/**/*.{html,css,js,ts,json}\"",
-    "lint": "eslint --ignore-path .eslintignore src"
+    "lint": "eslint src"
   },
   "repository": {
     "type": "git",
@@ -30,7 +30,7 @@
     "adm-zip": "^0.5.16",
     "copy-webpack-plugin": "^10.2.4",
     "css-loader": "^6.11.0",
-    "eslint": "^7.7.0",
+    "eslint": "^9.12.0",
     "eslint-config-airbnb-base": "^14.2.0",
     "eslint-plugin-html": "^6.0.3",
     "eslint-plugin-import": "^2.22.0",
