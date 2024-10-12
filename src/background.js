@@ -223,11 +223,12 @@ const processObjects = async () => {
 const addBlocks = async () => {
     // connect to database
     const connection = await supabase();
+    const entryDbId = getObjectIDFromObjectPage(document);
+
     const { data, error } = await connection
         .from('investment_projects')
         .select()
         .eq('id', entryDbId);
-    const entryDbId = getObjectIDFromObjectPage(document);
 
     const buildingDiv = document.querySelector('.Building');
     const newBlocksDIv = document.createElement('div');
@@ -244,7 +245,7 @@ const addBlocks = async () => {
     desc1.classList.add('descArea');
 
     if (data.length) {
-        desc1.value = data[0].flaws;
+        desc1.value = data[0]["flaws"];
     }
 
     const faBlock2 = document.createElement('div');
@@ -258,7 +259,7 @@ const addBlocks = async () => {
     console.log(data);
 
     if (data.length) {
-        desc2.value = data[0].advantages;
+        desc2.value = data[0]["advantages"];
     }
 
     faBlock1.appendChild(desc1);
@@ -291,6 +292,8 @@ document.addEventListener('DOMContentLoaded', () => {
         // "building page"
         addBlocks().then(() => {
             console.log('forms added');
+        }).catch((e) => {
+            throw e;
         });
     } else if (document.querySelectorAll('#search-results').length > 0) {
         // eslint-disable-next-line no-console
@@ -300,20 +303,20 @@ document.addEventListener('DOMContentLoaded', () => {
         const elementToObserve = document.getElementById('search-results');
         // create a new instance of `MutationObserver` named `observer`,
         // passing it a callback function
-        const observer = new MutationObserver(() => {
-            // process objects filtering on SPA page changed
-            (async () => {
-                await processObjects();
-            })();
-        });
+        // const observer = new MutationObserver(() => {
+        //     // process objects filtering on SPA page changed
+        //     (async () => {
+        //         await processObjects();
+        //     })();
+        // });
 
         // call `observe` on that MutationObserver instance,
         // passing it the element to observe, and the options object
-        observer.observe(elementToObserve, {
-            characterData: false,
-            childList: true,
-            attributes: false,
-        });
+        // observer.observe(elementToObserve, {
+        //     characterData: false,
+        //     childList: true,
+        //     attributes: false,
+        // });
 
         // process objects filtering on initial page load
         (async () => {

@@ -16,7 +16,7 @@ function b64EncodeUnicode(str) {
 const importValues = async () => {
     const text = document.getElementById('importData').value;
     const data = JSON.parse(text);
-    const supabase = await supabase();
+    const connection = await supabase();
     const insertDataItems = {};
 
     Object.entries(data).forEach((entry) => {
@@ -44,7 +44,7 @@ const importValues = async () => {
     });
     console.log(Object.values(insertDataItems));
     // insert data
-    const { data: d, error } = await supabase
+    const { data: d, error } = await connection
         .from('investment_projects')
         .insert(Object.values(insertDataItems)).select();
     console.log(data, error);
