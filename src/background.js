@@ -61,8 +61,7 @@ const updateObject = async (entryDbId, isHidden, card) => {
     // update entry
     const { data: entry } = await connection
         .from('investment_projects')
-        .update({ isHidden })
-        .eq('id', entryDbId)
+        .upsert({ id: entryDbId, isHidden})
         .select();
 
     const entryIsHidden = entry[0].isHidden;
@@ -110,6 +109,8 @@ const hide = async (entryDbId, card) => {
         } else {
             await updateObject(entryDbId, true, card);
         }
+    } else {
+      await updateObject(entryDbId, true, card);
     }
 };
 
@@ -163,9 +164,6 @@ const markIfHidden = async (entryDbId, card, excludeType) => {
     } else {
         makeCardRed(card, entryDbId);
     }
-
-    console.log(`add hide button for object id: ${entryDbId}`);
-    addToggleButton(card, entryDbId);
 };
 
 function getObjectID(card) {
@@ -213,10 +211,15 @@ const processObjects = async () => {
         // Add the desired column classes
         parentClasses.add('UIGrid-col-3', 'UIGrid-col-lg-4', 'UIGrid-col-md-6', 'UIGrid-col-xs-6');
 
+        console.log(`add hide button for object id: ${entryDbId}`);
+        addToggleButton(card, entryDbId);
+
         // mark card by red background if is hidden
-        markIfHidden(entryDbId, card, excludeType, hiddenList[entryDbId]).then(() => {
+        if (hiddenList[entryDbId]) {
+          markIfHidden(entryDbId, card, excludeType).then(() => {
             console.log(`card ${entryDbId} processed`);
-        });
+          });
+        }
     });
 };
 
@@ -275,8 +278,7 @@ const addBlocks = async () => {
 
     saveButton.addEventListener('click', () => {
         connection.from('investment_projects')
-            .update({ flaws: desc1.value, advantages: desc2.value })
-            .eq('id', entryDbId)
+            .upsert({ id: entryDbId, flaws: desc1.value, advantages: desc2.value })
             .then(() => {
                 desc1.style.backgroundColor = 'lightgreen';
                 desc2.style.backgroundColor = 'lightgreen';
@@ -303,20 +305,20 @@ document.addEventListener('DOMContentLoaded', () => {
         const elementToObserve = document.getElementById('search-results');
         // create a new instance of `MutationObserver` named `observer`,
         // passing it a callback function
-        // const observer = new MutationObserver(() => {
-        //     // process objects filtering on SPA page changed
-        //     (async () => {
-        //         await processObjects();
-        //     })();
-        // });
+        const observer = new MutationObserver(() => {
+            // process objects filtering on SPA page changed
+            (async () => {
+                await processObjects();
+            })();
+        });
 
         // call `observe` on that MutationObserver instance,
         // passing it the element to observe, and the options object
-        // observer.observe(elementToObserve, {
-        //     characterData: false,
-        //     childList: true,
-        //     attributes: false,
-        // });
+        observer.observe(elementToObserve, {
+            characterData: false,
+            childList: true,
+            attributes: false,
+        });
 
         // process objects filtering on initial page load
         (async () => {

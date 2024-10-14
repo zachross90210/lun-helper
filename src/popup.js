@@ -121,11 +121,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
                     connection
                         .from('config')
-                        .update({ key: hideType })
-                        .eq('key', 'hideType')
+                        .upsert({ key: 'hideType', val: hideType })
                         .then(() => {
                             console.log('hideType written to database');
                         });
+
                 });
             } catch (error) {
                 console.error('settings frame is not open unable to set listener to form submit');
