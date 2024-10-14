@@ -308,7 +308,7 @@ const addBlocks = async () => {
 document.addEventListener('DOMContentLoaded', () => {
     console.log('DOM content loaded');
     if (document.querySelectorAll('input[data-event-category="view_building_about"]').length) {
-        // eslint-disable-next-line no-console
+
         console.log('This is building page', window.location.href);
         // "building page"
         addBlocks().then(() => {
@@ -317,7 +317,7 @@ document.addEventListener('DOMContentLoaded', () => {
             throw e;
         });
     } else if (document.querySelectorAll('#search-results').length > 0) {
-        // eslint-disable-next-line no-console
+
         console.log('This is search results page', window.location.href);
         // search results page
 
