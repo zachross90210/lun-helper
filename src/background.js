@@ -185,6 +185,12 @@ const processObjects = async () => {
     const { data, error } = await connection
         .from('investment_projects')
         .select();
+
+    // throw error on DB read error
+    if (error) {
+        throw error;
+    }
+
     const hiddenList = data.reduce((result, entry) => {
         const sub = {};
         sub[entry.id] = entry.isHidden;
@@ -233,14 +239,19 @@ const addBlocks = async () => {
         .select()
         .eq('id', entryDbId);
 
+    // throw error on DB read error
+    if (error) {
+        throw error;
+    }
+
     const buildingDiv = document.querySelector('.Building');
     const newBlocksDIv = document.createElement('div');
     newBlocksDIv.classList.add('advFlawBlock', 'index100');
     buildingDiv.insertBefore(newBlocksDIv, buildingDiv.firstChild);
 
     const faBlock1 = document.createElement('div');
-    faBlock1.classList.add('faBlock', 'marginRight05em');
     const title = document.createElement('h3');
+    faBlock1.classList.add('faBlock', 'marginRight05em');
     title.textContent = 'Минусы комплекса:';
     faBlock1.appendChild(title);
 
@@ -281,14 +292,14 @@ const addBlocks = async () => {
             .upsert({ id: entryDbId, flaws: desc1.value, advantages: desc2.value });
       if (error) {
         console.log('save process done');
-        desc1.style.backgroundColor = 'lightgreen';
-        desc2.style.backgroundColor = 'lightgreen';
+        desc1.classList.add('greenTextBg');
+        desc2.classList.add('greenTextBg');
         console.log('background green set');
       } else {
         console.error(error);
         console.log('save process error');
-        desc1.style.backgroundColor = 'orange';
-        desc2.style.backgroundColor = 'orange';
+        desc1.classList.add('orangeTextBg');
+        desc2.classList.add('orangeTextBg');
         console.log('background orange set');
       }
     });
