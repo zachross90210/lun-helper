@@ -276,13 +276,21 @@ const addBlocks = async () => {
     newBlocksDIv.appendChild(faBlock2);
     newBlocksDIv.appendChild(saveButton);
 
-    saveButton.addEventListener('click', () => {
-        connection.from('investment_projects')
-            .upsert({ id: entryDbId, flaws: desc1.value, advantages: desc2.value })
-            .then(() => {
-                desc1.style.backgroundColor = 'lightgreen';
-                desc2.style.backgroundColor = 'lightgreen';
-            });
+    saveButton.addEventListener('click', async () => {
+      const { error } = await connection.from('investment_projects')
+            .upsert({ id: entryDbId, flaws: desc1.value, advantages: desc2.value });
+      if (error) {
+        console.log('save process done');
+        desc1.style.backgroundColor = 'lightgreen';
+        desc2.style.backgroundColor = 'lightgreen';
+        console.log('background green set');
+      } else {
+        console.error(error);
+        console.log('save process error');
+        desc1.style.backgroundColor = 'orange';
+        desc2.style.backgroundColor = 'orange';
+        console.log('background orange set');
+      }
     });
 };
 
