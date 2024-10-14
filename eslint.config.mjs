@@ -1,8 +1,10 @@
 import globals from "globals";
 import json from 'eslint-plugin-json';
-import html from "eslint-plugin-html"
+import html from "eslint-plugin-html";
+import js from "@eslint/js";
 
 export default [
+  js.configs.recommended,
   {
     settings: {
       'html/html-extensions': ['.html'],
