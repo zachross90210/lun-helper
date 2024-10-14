@@ -12,11 +12,24 @@ function b64EncodeUnicode(str) {
         ),
     );
 }
+//
+const setDbConnectionConfig = () => {
+  console.log('set db connection config');
+  const { dbHost, supaBaseKey } = JSON.parse(document.getElementById("importConfig").value);
+  chrome.storage.local.set({
+    dbHost: dbHost,
+    supaBaseKey: supaBaseKey
+  }, () => {
+    console.log('Stored');
+  });
+}
+
 
 const importValues = async () => {
+    console.log('start import');
     const text = document.getElementById('importData').value;
     const data = JSON.parse(text);
-    const supabase = await supabase();
+    const connection = await supabase();
     const insertDataItems = {};
 
     Object.entries(data).forEach((entry) => {
@@ -44,7 +57,7 @@ const importValues = async () => {
     });
     console.log(Object.values(insertDataItems));
     // insert data
-    const { data: d, error } = await supabase
+    const { data: d, error } = await connection
         .from('investment_projects')
         .insert(Object.values(insertDataItems)).select();
     console.log(data, error);
@@ -62,20 +75,8 @@ const exportValues = async () => {
         filename: 'lun_helper_export.json',
     });
 };
-(async () => {
-    const data = await importValues();
-    console.log(data['44']);
-})();
 
 document.addEventListener('DOMContentLoaded', () => {
-    supabase().then((connection) => {
-        getExcludeType(connection).then((hideType) => {
-            try {
-                document.getElementById('hideType').value = hideType;
-            } catch (error) {
-                console.error('settings frame is not open, unable to set type');
-            }
-
             // import button click handle
             try {
                 const importButton = document.getElementById('importButton');
@@ -84,12 +85,28 @@ document.addEventListener('DOMContentLoaded', () => {
                 console.error('settings frame is not open unable to set listener to import button');
             }
 
-            // import button click handle
+            // import config button click handle
+            try {
+                const importButton = document.getElementById('importConfigButton');
+                importButton.addEventListener('click', () => setDbConnectionConfig());
+            } catch (error) {
+                console.error('settings frame is not open unable to set listener to import button');
+            }
+
+            // export button click handle
             try {
                 const exportButton = document.getElementById('exportButton');
                 exportButton.addEventListener('click', () => exportValues());
             } catch (error) {
                 console.error('settings frame is not open unable to set listener to export button');
+            }
+
+    supabase().then((connection) => {
+        getExcludeType(connection).then((hideType) => {
+            try {
+                document.getElementById('hideType').value = hideType;
+            } catch (error) {
+                console.error('settings frame is not open, unable to set type');
             }
 
             // add form submit handler
@@ -104,11 +121,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
                     connection
                         .from('config')
-                        .update({ key: hideType })
-                        .eq('key', 'hideType')
+                        .upsert({ key: 'hideType', val: hideType })
                         .then(() => {
                             console.log('hideType written to database');
                         });
+
                 });
             } catch (error) {
                 console.error('settings frame is not open unable to set listener to form submit');

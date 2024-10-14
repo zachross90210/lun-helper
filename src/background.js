@@ -61,8 +61,7 @@ const updateObject = async (entryDbId, isHidden, card) => {
     // update entry
     const { data: entry } = await connection
         .from('investment_projects')
-        .update({ isHidden })
-        .eq('id', entryDbId)
+        .upsert({ id: entryDbId, isHidden})
         .select();
 
     const entryIsHidden = entry[0].isHidden;
@@ -110,6 +109,8 @@ const hide = async (entryDbId, card) => {
         } else {
             await updateObject(entryDbId, true, card);
         }
+    } else {
+      await updateObject(entryDbId, true, card);
     }
 };
 
@@ -163,9 +164,6 @@ const markIfHidden = async (entryDbId, card, excludeType) => {
     } else {
         makeCardRed(card, entryDbId);
     }
-
-    console.log(`add hide button for object id: ${entryDbId}`);
-    addToggleButton(card, entryDbId);
 };
 
 function getObjectID(card) {
@@ -187,6 +185,12 @@ const processObjects = async () => {
     const { data, error } = await connection
         .from('investment_projects')
         .select();
+
+    // throw error on DB read error
+    if (error) {
+        throw error;
+    }
+
     const hiddenList = data.reduce((result, entry) => {
         const sub = {};
         sub[entry.id] = entry.isHidden;
@@ -213,21 +217,32 @@ const processObjects = async () => {
         // Add the desired column classes
         parentClasses.add('UIGrid-col-3', 'UIGrid-col-lg-4', 'UIGrid-col-md-6', 'UIGrid-col-xs-6');
 
+        console.log(`add hide button for object id: ${entryDbId}`);
+        addToggleButton(card, entryDbId);
+
         // mark card by red background if is hidden
-        markIfHidden(entryDbId, card, excludeType, hiddenList[entryDbId]).then(() => {
+        if (hiddenList[entryDbId]) {
+          markIfHidden(entryDbId, card, excludeType).then(() => {
             console.log(`card ${entryDbId} processed`);
-        });
+          });
+        }
     });
 };
 
 const addBlocks = async () => {
     // connect to database
     const connection = await supabase();
+    const entryDbId = getObjectIDFromObjectPage(document);
+
     const { data, error } = await connection
         .from('investment_projects')
         .select()
         .eq('id', entryDbId);
-    const entryDbId = getObjectIDFromObjectPage(document);
+
+    // throw error on DB read error
+    if (error) {
+        throw error;
+    }
 
     const buildingDiv = document.querySelector('.Building');
     const newBlocksDIv = document.createElement('div');
@@ -235,8 +250,8 @@ const addBlocks = async () => {
     buildingDiv.insertBefore(newBlocksDIv, buildingDiv.firstChild);
 
     const faBlock1 = document.createElement('div');
-    faBlock1.classList.add('faBlock', 'marginRight05em');
     const title = document.createElement('h3');
+    faBlock1.classList.add('faBlock', 'marginRight05em');
     title.textContent = 'Минусы комплекса:';
     faBlock1.appendChild(title);
 
@@ -244,7 +259,7 @@ const addBlocks = async () => {
     desc1.classList.add('descArea');
 
     if (data.length) {
-        desc1.value = data[0].flaws;
+        desc1.value = data[0]["flaws"];
     }
 
     const faBlock2 = document.createElement('div');
@@ -258,7 +273,7 @@ const addBlocks = async () => {
     console.log(data);
 
     if (data.length) {
-        desc2.value = data[0].advantages;
+        desc2.value = data[0]["advantages"];
     }
 
     faBlock1.appendChild(desc1);
@@ -272,14 +287,21 @@ const addBlocks = async () => {
     newBlocksDIv.appendChild(faBlock2);
     newBlocksDIv.appendChild(saveButton);
 
-    saveButton.addEventListener('click', () => {
-        connection.from('investment_projects')
-            .update({ flaws: desc1.value, advantages: desc2.value })
-            .eq('id', entryDbId)
-            .then(() => {
-                desc1.style.backgroundColor = 'lightgreen';
-                desc2.style.backgroundColor = 'lightgreen';
-            });
+    saveButton.addEventListener('click', async () => {
+      const { error } = await connection.from('investment_projects')
+            .upsert({ id: entryDbId, flaws: desc1.value, advantages: desc2.value });
+      if (error) {
+        console.log('save process done');
+        desc1.classList.add('greenTextBg');
+        desc2.classList.add('greenTextBg');
+        console.log('background green set');
+      } else {
+        console.error(error);
+        console.log('save process error');
+        desc1.classList.add('orangeTextBg');
+        desc2.classList.add('orangeTextBg');
+        console.log('background orange set');
+      }
     });
 };
 
@@ -291,6 +313,8 @@ document.addEventListener('DOMContentLoaded', () => {
         // "building page"
         addBlocks().then(() => {
             console.log('forms added');
+        }).catch((e) => {
+            throw e;
         });
     } else if (document.querySelectorAll('#search-results').length > 0) {
         // eslint-disable-next-line no-console
