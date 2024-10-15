@@ -56,3 +56,11 @@
     margin: 0.5em;
     padding: 0.5em;
 }
+
+.orangeTextBg {
+    background-color: #FF7F50;
+}
+
+.greenTextBg {
+    background-color: lightgreen;
+}
