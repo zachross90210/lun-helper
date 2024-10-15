@@ -114,6 +114,32 @@ const hide = async (entryDbId, card) => {
     }
 };
 
+const addAdvFlawCounter = (card, flaws, advantages) => {
+    const counterBlock = document.createElement('div');
+    counterBlock.classList.add("counterBlock");
+    const p = document.createElement('p');
+    p.textContent = 'advantages | flaws';
+    counterBlock.appendChild(p)
+    const p2 = document.createElement('p');
+
+    let f = 0;
+    if (flaws !== null) {
+      f = (flaws.match(/^\s*\S/gm) || "").length;
+    }
+
+    let a = 0;
+    if (advantages !== null) {
+      a = (advantages.match(/^\s*\S/gm) || "").length;
+    }
+
+
+    p2.textContent = `${a} | ${f}`;
+    counterBlock.appendChild(p2)
+    const target = card.querySelector('div[class="Card-favorite"]');
+    target.insertBefore(counterBlock, target.firstChild);
+
+}
+
 function addToggleButton(card, oid, isHidden) {
     // create button block
     const buttonToggleBlock = document.createElement('div');
@@ -197,6 +223,15 @@ const processObjects = async () => {
         return { ...result, ...sub };
     }, {});
 
+    const entryData = data.reduce((result, entry) => {
+        const sub = {};
+        sub[entry.id] = { flaws: entry.flaws, advantages: entry.advantages };
+        return { ...result, ...sub };
+    }, {});
+
+    console.log(entryData)
+
+
     console.log('process objects');
 
     document.querySelectorAll('div.Card').forEach((card) => {
@@ -219,6 +254,15 @@ const processObjects = async () => {
 
         console.log(`add hide button for object id: ${entryDbId}`);
         addToggleButton(card, entryDbId);
+
+
+        if (Object.keys(entryData).includes(entryDbId)) {
+          console.log(111, entryData[entryDbId])
+          if (entryData[entryDbId]["flaws"] || entryData[entryDbId]["advantages"]) {
+            // add counter block
+            addAdvFlawCounter(card, entryData[entryDbId]["flaws"], entryData[entryDbId]["advantages"]);
+          }
+        }
 
         // mark card by red background if is hidden
         if (hiddenList[entryDbId]) {

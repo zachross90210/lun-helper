@@ -64,3 +64,9 @@
 .greenTextBg {
     background-color: lightgreen;
 }
+
+.counterBlock {
+  float: left;
+  background-color: white;
+  padding: 0.3em;
+}
