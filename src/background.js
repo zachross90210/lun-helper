@@ -290,7 +290,7 @@ const addBlocks = async () => {
     saveButton.addEventListener('click', async () => {
         const { error } = await connection.from('investment_projects')
             .upsert({ id: entryDbId, flaws: desc1.value, advantages: desc2.value });
-        if (error) {
+        if (!error) {
             console.log('save process done');
             desc1.classList.add('greenTextBg');
             desc2.classList.add('greenTextBg');
