@@ -244,7 +244,7 @@ const addBlocks = async () => {
         throw error;
     }
 
-    const buildingDiv = document.querySelector('.Building', '.Cottage');
+    const buildingDiv = document.querySelector('.SecondaryNavigation').parentElement;
     const newBlocksDIv = document.createElement('div');
     newBlocksDIv.classList.add('advFlawBlock', 'index100');
     buildingDiv.insertBefore(newBlocksDIv, buildingDiv.firstChild);
