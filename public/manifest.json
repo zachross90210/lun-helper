@@ -3,7 +3,7 @@
 
   "name": "lun.ua helper",
   "description": "This is a Chrome extension designed to enhance the user experience on https://lun.ua",
-  "version": "1",
+  "version": "3",
 
   "permissions": [
     "storage",
