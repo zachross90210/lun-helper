@@ -59,21 +59,20 @@ const updateObject = async (entryDbId, isHidden, card) => {
     // then update button on data return
 
     // update entry
-    const { data: entry } = await connection
+    await connection
         .from('investment_projects')
         .upsert({ id: entryDbId, isHidden})
         .select();
 
-    const entryIsHidden = entry[0].isHidden;
 
-    if (!entryIsHidden) { // object is not hidden
+    if (!isHidden) { // object is not hidden
         if (excludeType === 'markRed' || excludeType === undefined) {
             makeCardWhite(card, entryDbId);
         }
 
         // swap toggle button
         swapToggleButton(card, toggleButtonId, true);
-    } else if (entryIsHidden) { // object is hidden
+    } else if (isHidden) { // object is hidden
         if (excludeType === 'remove') {
             card.parentNode.remove();
         } else {
@@ -112,6 +111,8 @@ const hide = async (entryDbId, card) => {
     } else {
         await updateObject(entryDbId, true, card);
     }
+
+    x();
 };
 
 const addAdvFlawCounter = (card, flaws, advantages) => {
@@ -192,6 +193,20 @@ const markIfHidden = async (entryDbId, card, excludeType) => {
     }
 };
 
+const x = () => {
+    const cardsCounter = document.querySelectorAll('div.Card').length;
+    if (cardsCounter === 0 ) {
+      console.log('ALL ELEMENTS ARE HIDDEN, CHECK NEXT PAGES');
+
+      const target = document.querySelector('.UIGrid');
+      const div = document.createElement('div');
+      div.setAttribute('id', 'elements-hidden')
+      div.setAttribute('class', 'elements-hidden')
+      div.textContent = 'ALL ELEMENTS ARE HIDDEN, CHECK NEXT PAGES';
+      target.after(div);
+    }
+}
+
 function getObjectID(card) {
     // get object ID from list page
     return card.querySelector('div.UIFavoriteButton').getAttribute('data-favorites')
@@ -205,6 +220,12 @@ function getObjectIDFromObjectPage(page) {
 }
 
 const processObjects = async () => {
+    try {
+      document.getElementById('elements-hidden').remove();
+    } catch (e) {
+       // pass
+    }
+
     // connect to database
     const connection = await supabase();
     const excludeType = await getExcludeType(connection);
@@ -271,6 +292,9 @@ const processObjects = async () => {
             });
         }
     });
+
+   x();
+
 };
 
 const addBlocks = async () => {
@@ -361,7 +385,6 @@ document.addEventListener('DOMContentLoaded', () => {
             throw e;
         });
     } else if (document.querySelectorAll('#search-results').length > 0) {
-
         console.log('This is search results page', window.location.href);
         // search results page
 
