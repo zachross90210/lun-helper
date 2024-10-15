@@ -2,7 +2,7 @@ import { createClient } from '@supabase/supabase-js';
 
 const getSupabaseConnection = async () => {
     return chrome.storage.local.get(['dbHost', 'supaBaseKey']).then((data) => {
-      return createClient(data["dbHost"], data["supaBaseKey"])
+        return createClient(data["dbHost"], data["supaBaseKey"])
     });
 }
 

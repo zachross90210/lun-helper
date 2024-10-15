@@ -14,14 +14,14 @@ function b64EncodeUnicode(str) {
 }
 //
 const setDbConnectionConfig = () => {
-  console.log('set db connection config');
-  const { dbHost, supaBaseKey } = JSON.parse(document.getElementById("importConfig").value);
-  chrome.storage.local.set({
-    dbHost: dbHost,
-    supaBaseKey: supaBaseKey
-  }, () => {
-    console.log('Stored');
-  });
+    console.log('set db connection config');
+    const { dbHost, supaBaseKey } = JSON.parse(document.getElementById("importConfig").value);
+    chrome.storage.local.set({
+        dbHost: dbHost,
+        supaBaseKey: supaBaseKey
+    }, () => {
+        console.log('Stored');
+    });
 }
 
 
@@ -57,16 +57,24 @@ const importValues = async () => {
     });
     console.log(Object.values(insertDataItems));
     // insert data
-    const { data: d, error } = await connection
+    const { error } = await connection
         .from('investment_projects')
-        .insert(Object.values(insertDataItems)).select();
-    console.log(data, error);
+        .insert(Object.values(insertDataItems))
+        .select();
+    // throw error on DB read error
+    if (error) {
+        throw error;
+    }
 };
 
 // export investment projects
 const exportValues = async () => {
     const connection = await supabase();
     const { data: investment_projects, error } = await connection.from('investment_projects').select('*');
+    // throw error on DB read error
+    if (error) {
+        throw error;
+    }
     const result = JSON.stringify(investment_projects);
     console.log(result);
     const url = `data:application/json;base64,${b64EncodeUnicode(result)}`;
@@ -77,35 +85,39 @@ const exportValues = async () => {
 };
 
 document.addEventListener('DOMContentLoaded', () => {
-            // import button click handle
-            try {
-                const importButton = document.getElementById('importButton');
-                importButton.addEventListener('click', () => importValues());
-            } catch (error) {
-                console.error('settings frame is not open unable to set listener to import button');
-            }
+    // import button click handle
+    try {
+        const importButton = document.getElementById('importButton');
+        importButton.addEventListener('click', () => importValues());
+    } catch (error) {
+        console.error(error);
+        console.error('settings frame is not open unable to set listener to import button');
+    }
 
-            // import config button click handle
-            try {
-                const importButton = document.getElementById('importConfigButton');
-                importButton.addEventListener('click', () => setDbConnectionConfig());
-            } catch (error) {
-                console.error('settings frame is not open unable to set listener to import button');
-            }
+    // import config button click handle
+    try {
+        const importButton = document.getElementById('importConfigButton');
+        importButton.addEventListener('click', () => setDbConnectionConfig());
+    } catch (error) {
+        console.error(error);
+        console.error('settings frame is not open unable to set listener to import button');
+    }
 
-            // export button click handle
-            try {
-                const exportButton = document.getElementById('exportButton');
-                exportButton.addEventListener('click', () => exportValues());
-            } catch (error) {
-                console.error('settings frame is not open unable to set listener to export button');
-            }
+    // export button click handle
+    try {
+        const exportButton = document.getElementById('exportButton');
+        exportButton.addEventListener('click', () => exportValues());
+    } catch (error) {
+        console.error(error);
+        console.error('settings frame is not open unable to set listener to export button');
+    }
 
     supabase().then((connection) => {
         getExcludeType(connection).then((hideType) => {
             try {
                 document.getElementById('hideType').value = hideType;
             } catch (error) {
+                console.error(error);
                 console.error('settings frame is not open, unable to set type');
             }
 
@@ -128,6 +140,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 });
             } catch (error) {
+                console.error(error);
                 console.error('settings frame is not open unable to set listener to form submit');
             }
         });

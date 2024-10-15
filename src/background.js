@@ -110,7 +110,7 @@ const hide = async (entryDbId, card) => {
             await updateObject(entryDbId, true, card);
         }
     } else {
-      await updateObject(entryDbId, true, card);
+        await updateObject(entryDbId, true, card);
     }
 };
 
@@ -222,9 +222,9 @@ const processObjects = async () => {
 
         // mark card by red background if is hidden
         if (hiddenList[entryDbId]) {
-          markIfHidden(entryDbId, card, excludeType).then(() => {
-            console.log(`card ${entryDbId} processed`);
-          });
+            markIfHidden(entryDbId, card, excludeType).then(() => {
+                console.log(`card ${entryDbId} processed`);
+            });
         }
     });
 };
@@ -288,20 +288,20 @@ const addBlocks = async () => {
     newBlocksDIv.appendChild(saveButton);
 
     saveButton.addEventListener('click', async () => {
-      const { error } = await connection.from('investment_projects')
+        const { error } = await connection.from('investment_projects')
             .upsert({ id: entryDbId, flaws: desc1.value, advantages: desc2.value });
-      if (error) {
-        console.log('save process done');
-        desc1.classList.add('greenTextBg');
-        desc2.classList.add('greenTextBg');
-        console.log('background green set');
-      } else {
-        console.error(error);
-        console.log('save process error');
-        desc1.classList.add('orangeTextBg');
-        desc2.classList.add('orangeTextBg');
-        console.log('background orange set');
-      }
+        if (error) {
+            console.log('save process done');
+            desc1.classList.add('greenTextBg');
+            desc2.classList.add('greenTextBg');
+            console.log('background green set');
+        } else {
+            console.error(error);
+            console.log('save process error');
+            desc1.classList.add('orangeTextBg');
+            desc2.classList.add('orangeTextBg');
+            console.log('background orange set');
+        }
     });
 };
 

@@ -13,10 +13,8 @@ export default [
       'no-dupe-args': 'error'
     },
     languageOptions: {
-      parserOptions: {
-        ecmaVersion: 11,
-      },
       globals: {
+        ...globals.node,
         ...globals.browser,
         ...globals.webextensions,
         ...globals.es2020,
@@ -24,20 +22,23 @@ export default [
       },
     },
     rules: {
+      "no-console": "off",
       indent: [
         'warn',
         4,
       ]
     },
+    files: [
+      "**/*.json",
+      "**/*.html",
+      "**/*.js"
+    ],
     ignores: [
       ".config/*",
       "build/*",
       "release/*",
-      "node_modules/*"
-        ],
-    files: [
-      "**/*.json",
-      "**/*.html",
+      "node_modules/*",
+      "src/test.js"
     ],
     plugins: { html, json }
   }
