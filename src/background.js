@@ -29,6 +29,14 @@ function makeCardRed(card, id) {
     card.parentNode.classList.add('redBg');
 }
 
+// add class greenBg
+function makeCardGreen(card, id) {
+    // add Red background to the card entry
+    // means adding entry to excluded
+    console.log(`mark object with id: ${id} green`);
+    card.parentNode.classList.add('greenBg');
+}
+
 function swapToggleButton(card, toggleButtonId, isHidden) {
     // here we do swap operation
     // swap show to hide, green to red and backwards
@@ -115,7 +123,7 @@ const hide = async (entryDbId, card) => {
     x();
 };
 
-const addAdvFlawCounter = (card, flaws, advantages) => {
+const addAdvFlawCounter = (card, flaws, advantages, entryDbId) => {
     const counterBlock = document.createElement('div');
     counterBlock.classList.add("counterBlock");
     const p = document.createElement('p');
@@ -138,6 +146,10 @@ const addAdvFlawCounter = (card, flaws, advantages) => {
     counterBlock.appendChild(p2)
     const target = card.querySelector('div[class="Card-favorite"]');
     target.insertBefore(counterBlock, target.firstChild);
+
+    if (a > 0) {
+      makeCardGreen(card, entryDbId);
+    }
 
 }
 
@@ -281,7 +293,7 @@ const processObjects = async () => {
           console.log(111, entryData[entryDbId])
           if (entryData[entryDbId]["flaws"] || entryData[entryDbId]["advantages"]) {
             // add counter block
-            addAdvFlawCounter(card, entryData[entryDbId]["flaws"], entryData[entryDbId]["advantages"]);
+            addAdvFlawCounter(card, entryData[entryDbId]["flaws"], entryData[entryDbId]["advantages"], entryDbId);
           }
         }
 

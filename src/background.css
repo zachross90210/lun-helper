@@ -2,6 +2,10 @@
     background-color: rgba(250,0,0,0.2) !important;
 }
 
+.greenBg {
+    background-color: lightgreen !important;
+}
+
 .Card .buttonArea {
 	position: absolute;
 	right: 8px;
